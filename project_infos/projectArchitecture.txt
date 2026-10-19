@@ -1,0 +1,11 @@
+main
+	java
+		com
+			application
+				eurder_project
+					controller
+						dto
+					domain
+					repository
+					service
+						request
