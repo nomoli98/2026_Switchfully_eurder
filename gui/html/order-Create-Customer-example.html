@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order</title>
+    <link href='../styling/styles.css' rel='stylesheet'/>
+</head>
+<body>
+<header>
+    <div class="logo-group">
+        <img src="../img/order-icon.png" alt="order-icon">
+        <span class="logo-title">&Ouml;RDER</span>
+    </div>
+    <nav role="navigation">
+        <a href='#'>Customers</a>
+        <a href='#'>Nav #2</a>
+        <a href='#'>Nav #3</a>
+        <a href='#'>Nav #4</a>
+    </nav>
+</header>
+<main>
+    <section>
+        <h3 class="section-title">Create Customer</h3>
+        <form>
+            <div class="row">
+                <div class="col-1">
+                    <label class="form-label" for="firstName">Firstname</label>
+                    <input class="form-control" id="firstName" type="text"/>
+                </div>
+                <div class="col-1">
+                    <label class="form-label" for="lastName">Lastname</label>
+                    <input class="form-control" id="lastName" type="text"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1">
+                    <label class="form-label" for="email">Email</label>
+                    <input class="form-control" id="email" type="email"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1">
+                    <label class="form-label" for="phoneNumber">Phone number (mobile)</label>
+                    <input class="form-control" id="phoneNumber" type="tel"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <label class="form-label" for="street">Street</label>
+                    <input class="form-control" id="street" type="text"/>
+                </div>
+                <div class="col-1">
+                    <label class="form-label" for="number">Number</label>
+                    <input class="form-control" id="number" type="text"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1">
+                    <label class="form-label" for="postalCode">Postalcode</label>
+                    <input class="form-control" id="postalCode" type="text"/>
+                </div>
+                <div class="col-1">
+                    <label class="form-label" for="country">Country</label>
+                    <select id="country" class="form-select">
+                        <option>Belgium</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <button class="col-4 btn btn-create" type="submit">CREATE</button>
+                <button class="col-1 btn">CANCEL</button>
+            </div>
+        </form>
+    </section>
+</main>
+<footer>
+    <div class="logo-group">
+        <img src="../img/order-icon.png" alt="order-icon">
+        <span class="logo-title">&Ouml;RDER</span>
+    </div>
+</footer>
+</body>
+</html>
