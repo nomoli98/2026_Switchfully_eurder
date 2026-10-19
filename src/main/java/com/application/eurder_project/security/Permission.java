@@ -1,4 +1,4 @@
-package com.application.eurder_project.controller.security;
+package com.application.eurder_project.security;
 
 public enum Permission {
     VIEW_ALL_USERS,

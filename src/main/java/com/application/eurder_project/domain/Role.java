@@ -1,6 +1,6 @@
 package com.application.eurder_project.domain;
 
-import com.application.eurder_project.controller.security.Permission;
+import com.application.eurder_project.security.Permission;
 
 import java.util.List;
 

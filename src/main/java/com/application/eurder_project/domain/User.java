@@ -1,5 +1,8 @@
 package com.application.eurder_project.domain;
 
+import com.application.eurder_project.security.Permission;
+
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -45,6 +48,15 @@ public class User {
 
     public Address getAddress() {
         return address;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public boolean hasPermission(Permission permission) {
+        List<Permission> permissions = getRole().permissions;
+        return permissions.contains(permission);
     }
 
     @Override
