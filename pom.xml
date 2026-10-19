@@ -33,6 +33,7 @@
         <jackson-2-bom.version>2.21.7</jackson-2-bom.version>
         <tomcat.version>11.0.26</tomcat.version>
         <commons-beanutils.version>2.0.0</commons-beanutils.version>
+        <asm.version>9.11</asm.version>
     </properties>
     <dependencies>
         <dependency>
@@ -69,6 +70,12 @@
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
             <version>1.9.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>${asm.version}</version>
         </dependency>
 
     </dependencies>
