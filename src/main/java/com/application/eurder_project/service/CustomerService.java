@@ -1,5 +1,6 @@
 package com.application.eurder_project.service;
 
+import com.application.eurder_project.domain.Address;
 import com.application.eurder_project.domain.Customer;
 import com.application.eurder_project.repository.CustomerRepository;
 import com.application.eurder_project.service.exception.RequestException;
@@ -30,14 +31,20 @@ public class CustomerService {
         if (!validator.isValidEmail(request.email())) throw RequestException.invalidField("email");
         if (validator.isNotFilledIn(request.phoneNumber())) throw RequestException.notFilledOutField("phone number");
         if (!validator.isValidPhoneNumber(request.phoneNumber())) throw RequestException.invalidField("phone number");
-        if (!validator.isValidAddress(request.address())) throw RequestException.invalidField("address");
+        if (!validator.isValidAddress(new Address(request.street(),
+                                                  request.number(),
+                                                  request.apartment(),
+                                                  request.postalCode(),
+                                                  request.country()))) throw RequestException.invalidField("address");
 
-        return repository.save(new Customer(
-                request.firstname(),
-                request.lastname(),
-                request.email(),
-                request.phoneNumber(),
-                request.address()
-        ));
+        return repository.save(new Customer(request.firstname(),
+                                            request.lastname(),
+                                            request.email(),
+                                            request.phoneNumber(),
+                                            new Address(request.street(),
+                                                        request.number(),
+                                                        request.apartment(),
+                                                        request.postalCode(),
+                                                        request.country())));
     }
 }

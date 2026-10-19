@@ -6,5 +6,9 @@ public record PostCustomerRequest(String firstname,
                                   String lastname,
                                   String email,
                                   String phoneNumber,
-                                  Address address) {
+                                  String street,
+                                  int number,
+                                  String apartment,
+                                  String postalCode,
+                                  String country) {
 }

@@ -1,0 +1,317 @@
+package com.application.eurder_project.controller;
+
+import com.application.eurder_project.repository.CustomerRepository;
+import com.application.eurder_project.service.request.PostCustomerRequest;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.stream.Stream;
+
+import static com.application.eurder_project.controller.CustomerTestData.validRequest;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class CustomerControllerTest {
+
+    private static final String CUSTOMERS = "/customers";
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @LocalServerPort
+    private int port;
+
+    @BeforeEach
+    void setUp() {
+        RestAssured.port = port;
+    }
+
+    @AfterEach
+    void tearDown() {
+        RestAssured.reset();
+    }
+
+    @Test
+    @DisplayName("GetAll -> Empty list")
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void getAllCustomers_whenNoCustomersExist_returnsEmptyList() {
+        given().when().get(CUSTOMERS).then().statusCode(200).contentType(ContentType.JSON).body("", hasSize(0));
+    }
+
+    @Test
+    @DisplayName("CreateCustomer -> 201 and Customer")
+    void createCustomer_withValidRequest_returns201AndTheCreatedCustomer() {
+        given().contentType(ContentType.JSON)
+               .body(validRequest())
+               .when()
+               .post(CUSTOMERS)
+               .then()
+               .statusCode(201)
+               .body("id", notNullValue())
+               .body("firstname", equalTo("Jane"))
+               .body("lastname", equalTo("Doe"))
+               .body("email", equalTo("jane.doe@example.com"))
+               .body("phoneNumber", equalTo("0471234567"))
+               .body("address.street", equalTo("Main Street"))
+               .body("address.number", equalTo(12))
+               .body("address.apartment", equalTo("2B"))
+               .body("address.postalCode", equalTo("1000"))
+               .body("address.country", equalTo("Belgium"));
+    }
+
+    private String postCustomer(PostCustomerRequest request) {
+        return given().contentType(ContentType.JSON)
+                      .body(request)
+                      .when()
+                      .post(CUSTOMERS)
+                      .then()
+                      .statusCode(201)
+                      .extract()
+                      .path("id");
+    }
+
+    @Test
+    @DisplayName("CreateCustomers -> GetAll -> List of Customers")
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void createdCustomers_appearInTheCustomerList() {
+        String janeId = postCustomer(validRequest("Jane", "jane@example.com"));
+        String johnId = postCustomer(validRequest("John", "john@example.com"));
+
+        given().when()
+               .get(CUSTOMERS)
+               .then()
+               .statusCode(200)
+               .body("", hasSize(2))
+               .body("id", containsInAnyOrder(janeId, johnId))
+               .body("email", containsInAnyOrder("jane@example.com", "john@example.com"));
+    }
+
+    @Test
+    @DisplayName("BadRequest -> Not Stored")
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void invalidRequest_isNotStored() {
+        given().contentType(ContentType.JSON)
+               .body(new PostCustomerRequest(null,
+                                             "Doe",
+                                             "jane@example.com",
+                                             "0471234567",
+                                             "Main Street",
+                                             12,
+                                             "2B",
+                                             "1000",
+                                             "Belgium"))
+               .when()
+               .post(CUSTOMERS)
+               .then()
+               .statusCode(400);
+
+        given().when().get(CUSTOMERS).then().body("$", hasSize(0));
+    }
+
+    static Stream<Arguments> invalidRequests() {
+        String email = "jane.doe@example.com";
+        String phone = "0471234567";
+
+        return Stream.of(
+                // firstname / lastname
+                arguments("firstname is null",
+                          new PostCustomerRequest(null,
+                                                  "Doe",
+                                                  email,
+                                                  phone,
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+                arguments("firstname is empty",
+                          new PostCustomerRequest("", "Doe", email, phone, "Main Street", 12, "2B", "1000", "Belgium")),
+                arguments("firstname is whitespace",
+                          new PostCustomerRequest("   ",
+                                                  "Doe",
+                                                  email,
+                                                  phone,
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+                arguments("lastname is null",
+                          new PostCustomerRequest("Jane",
+                                                  null,
+                                                  email,
+                                                  phone,
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+                arguments("lastname is empty",
+                          new PostCustomerRequest("Jane",
+                                                  "",
+                                                  email,
+                                                  phone,
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+
+                // email
+                arguments("email is null",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  null,
+                                                  phone,
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+                arguments("email is empty",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  "",
+                                                  phone,
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+                arguments("email has no @",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  "jane.doe.example.com",
+                                                  phone,
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+                arguments("email has no domain ext",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  "jane@example",
+                                                  phone,
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+                arguments("email has no local part",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  "@example.com",
+                                                  phone,
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+
+                // phone number
+                arguments("phone is null",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  email,
+                                                  null,
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+                arguments("phone is too short",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  email,
+                                                  "047123456",
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+                arguments("phone is too long",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  email,
+                                                  "04712345678",
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+                arguments("phone contains letters",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  email,
+                                                  "04712345ab",
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+
+                // address
+                arguments("street is null",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  email,
+                                                  phone,
+                                                  null,
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+                arguments("street number is 0",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  email,
+                                                  phone,
+                                                  "Main Street",
+                                                  0,
+                                                  "2B",
+                                                  "1000",
+                                                  "Belgium")),
+                arguments("postal code is null",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  email,
+                                                  phone,
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  null,
+                                                  "Belgium")),
+                arguments("country is null",
+                          new PostCustomerRequest("Jane",
+                                                  "Doe",
+                                                  email,
+                                                  phone,
+                                                  "Main Street",
+                                                  12,
+                                                  "2B",
+                                                  "1000",
+                                                  null)));
+    }
+
+    @ParameterizedTest(name = "{0} -> 400")
+    @MethodSource("invalidRequests")
+    @DisplayName("Invalid Request fields -> 400")
+    void createCustomer_withInvalidRequest_returns400(String description, PostCustomerRequest request) {
+        given().contentType(ContentType.JSON).body(request).when().post(CUSTOMERS).then().statusCode(400);
+    }
+
+}
