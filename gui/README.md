@@ -1,10 +1,11 @@
 # Örder GUI
 
-![Order Logo](../order.png)
+![Order Logo](../project_infos/order.png)
 
 Good news! We're hired to develop the frontend of the Örder application!
 
 The backend is already fully implemented, it can be found here:
+
 - https://github.com/switchfully/order-solution-jpa
 - You will need this backend.
 - Clone the repository, read its `readme.md` and run the application locally.
@@ -12,7 +13,8 @@ The backend is already fully implemented, it can be found here:
 
 **Remark 1**:
 Authentication or authorization are completely optional.
-- Should you have an abundance of time, you can implement both authentication and authorization. 
+
+- Should you have an abundance of time, you can implement both authentication and authorization.
     - Provide a registration and sign-in form / screen for this.
 - This will also require changes on the backend...
 
@@ -38,10 +40,11 @@ Authentication or authorization are completely optional.
 **As a user I want to filter items in the overview of all the items so that I can more efficiently find an Item.**
 
 ![](img/order-Item-overview-filter.png)
+
 - Filter by name only
     - Filtering is not case-sensitive
     - Filtering is based-on a starts-with strategy.
-- The filtering can be performed purely on the frontend side. 
+- The filtering can be performed purely on the frontend side.
 
 ## Story IT3: Create Item
 
@@ -58,12 +61,13 @@ Authentication or authorization are completely optional.
     - Red text should provide quick feedback to the user what he did wrong.
     - Description can only be 255 characters or fewer.
     - Negative price or stock is not allowed.
-- After successfully creating an item, redirect the user to the item detail page. 
+- After successfully creating an item, redirect the user to the item detail page.
     - This page might not yet exist, simply redirect to the url of the page then.
-    
+
 ## Story IT4: Create Item - Length counter
 
-**As a user I want to see how many characters I can enter for the description so that I know when I have provided too much text.**
+**As a user I want to see how many characters I can enter for the description so that I know when I have provided too
+much text.**
 
 ![](img/order-Create-Item-Text-Length.png)
 
@@ -128,13 +132,15 @@ Authentication or authorization are completely optional.
 
 ## Story CU2: Customer overview - Filter
 
-**As a user I want to filter customers in the overview of all the customers so that I can more efficiently find a customer.**
+**As a user I want to filter customers in the overview of all the customers so that I can more efficiently find a
+customer.**
 
 ![](img/order-Customer-overview-filter.png)
+
 - Filter by lastname only
     - Filtering is not case-sensitive
     - Filtering is based-on a starts-with strategy.
-- The filtering can be performed purely on the frontend side. 
+- The filtering can be performed purely on the frontend side.
 
 ## Story CU3: Create Customer
 
@@ -154,9 +160,9 @@ Authentication or authorization are completely optional.
     - phoneNumber (value object)
 - Provide proper validation
     - Red text should provide quick feedback to the user what he did wrong.
-- After successfully creating a Customer, redirect the user to the Customer detail page. 
+- After successfully creating a Customer, redirect the user to the Customer detail page.
     - This page might not yet exist, simply redirect to the url of the page then.
-    
+
 ## Story CU4: View Customer Detail
 
 **As a user I want to view one specific Customer so that I can see its detailed information**
@@ -199,7 +205,8 @@ Authentication or authorization are completely optional.
 
 ## Story ORBA1: Shop for Items
 
-**As a user I want to add Items to my basket so that I can keep an overview of the items I am going to order (before ordering them).**
+**As a user I want to add Items to my basket so that I can keep an overview of the items I am going to order (before
+ordering them).**
 
 ![](img/order-Order-Items1.png)
 
@@ -207,7 +214,7 @@ Authentication or authorization are completely optional.
     - Out of Stock items can still be added.
 - Technical tip: Keep the Basket in a singleton service or localStorage
 - When an Item is added to the basket, give some kind of visual feedback to the user that this happened.
-- Every Item should have a View Basket button (for now, just a placeholder) 
+- Every Item should have a View Basket button (for now, just a placeholder)
 
 ## Story ORBA2: View Basket
 
@@ -221,7 +228,7 @@ Authentication or authorization are completely optional.
 - Also display a total price of the whole basket
 - All the displayed prices are just informational. They will not be send to the backend.
 - Every item should have a 'remove' button, this will remove the item from the basket.
-- The basket should have a Place Order button (for now, just a placeholder) 
+- The basket should have a Place Order button (for now, just a placeholder)
 
 ## Story ORBA3: Place Order
 
@@ -229,18 +236,19 @@ Authentication or authorization are completely optional.
 
 ![](img/order-Order-Items-placed.png)
 
-- After clicking the Place Order button, and the order was successfully registered on the backend, provide the 
-user with a dialog to inform him/her about the fact that the placement of the order was successful.
+- After clicking the Place Order button, and the order was successfully registered on the backend, provide the user with
+  a dialog to inform him/her about the fact that the placement of the order was successful.
 - The basket should automatically be cleared.
 - Automatically navigate to the items overview.
-- (If the order should not be successful, inform the user!)  
+- (If the order should not be successful, inform the user!)
 
 # Nice to Have stories
 
 ## Story OR1: Overview of orders
 
 Show an overview of all the orders.
-- Be inspired by - and base yourself on - the stories for the overview of the items and customers 
+
+- Be inspired by - and base yourself on - the stories for the overview of the items and customers
 
 ## Story OR2: Order report
 
@@ -249,6 +257,7 @@ For a specific customer, show in a visual appealing way, all of its orders (the 
 ## Story CUPAG1: Pagination
 
 Provide for the overview of customers pagination
+
 - It can be pagination that's only available on the frontend
     - Thus, you get all the customers from the backend, but then paginate them on the frontend
         - (in reality: you will want to perform backend pagination as well)

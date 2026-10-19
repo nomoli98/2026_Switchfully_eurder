@@ -1,0 +1,44 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Customer {
+  id : uuid
+  firstname : string
+  lastname : string
+  email : string
+  phoneNumber : string
+}
+
+class Address {
+  street : string
+  number : integer
+  apartment : string [0..1]
+  postalCode : string
+  country : string
+}
+
+class Item {
+  id : uuid
+  name : string
+  description : string
+  price : double
+  stock : integer
+}
+
+class Order {
+  totalPrice : double
+}
+
+class ItemGroup {
+  amount : integer
+  shippingDate : LocalDate
+}
+
+Customer *-- "1" Address : address
+Customer "1" -- "0..*" Order : places >
+Order "0..*" -- "1..*" Item : contains >
+
+(Order, Item) .. ItemGroup
+@enduml
+
+
