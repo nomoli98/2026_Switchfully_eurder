@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class customerMapper {
+public class CustomerMapper {
     public CustomerDto toDto(Customer customer) {
         return new CustomerDto(customer.getId(),
                 customer.getFirstname(),

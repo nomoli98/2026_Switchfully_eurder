@@ -11,15 +11,17 @@ import java.util.List;
 
 @Service
 public class CustomerService {
-    private CustomerRepository repository;
-    private CustomerValidator validator;
+    private final CustomerRepository repository;
+    private final CustomerValidator validator;
 
     public CustomerService() {
         this.repository = new CustomerRepository();
+        this.validator = new CustomerValidator();
     }
 
-    public CustomerService(CustomerRepository repository) {
+    public CustomerService(CustomerRepository repository, CustomerValidator validator) {
         this.repository = repository;
+        this.validator = validator;
     }
 
     public List<Customer> getAllCustomers() {
