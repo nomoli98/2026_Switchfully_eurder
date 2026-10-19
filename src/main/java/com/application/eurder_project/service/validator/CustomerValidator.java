@@ -1,8 +1,11 @@
 package com.application.eurder_project.service.validator;
 
 import com.application.eurder_project.domain.Address;
+import com.application.eurder_project.domain.Role;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 @Component
@@ -20,6 +23,10 @@ public class CustomerValidator {
         return number == 0;
     }
 
+    public boolean isNotFilledIn(Role role) {
+        return role == null;
+    }
+
     public boolean isValidEmail(String string) {
         return EMAIL_PATTERN.matcher(string).matches();
     }
@@ -35,5 +42,10 @@ public class CustomerValidator {
         if (isNotFilledIn(address.country())) return false;
         if (isNotFilledIn(address.postalCode())) return false;
         return true;
+    }
+
+    public boolean isValidRole(Role role) {
+        List<Role> roles = Arrays.asList(Role.values());
+        return roles.contains(role);
     }
 }

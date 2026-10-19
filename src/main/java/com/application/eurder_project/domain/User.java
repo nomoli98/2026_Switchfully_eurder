@@ -1,26 +1,26 @@
 package com.application.eurder_project.domain;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Objects;
 import java.util.UUID;
 
 
-public class Customer {
+public class User {
     private final UUID id;
     private String firstname;
     private String lastname;
     private final String email;
     private String phoneNumber;
     private Address address;
+    private Role role;
 
-    public Customer(String firstname, String lastname, String email, String phoneNumber, Address address) {
+    public User(String firstname, String lastname, String email, String phoneNumber, Address address, Role role) {
         this.id = UUID.randomUUID();
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.role = role;
     }
 
     public UUID getId() {
@@ -50,7 +50,7 @@ public class Customer {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Customer customer = (Customer) o;
+        User customer = (User) o;
         return Objects.equals(id, customer.id) && Objects.equals(firstname, customer.firstname) && Objects.equals(lastname, customer.lastname) && Objects.equals(email, customer.email) && Objects.equals(phoneNumber, customer.phoneNumber) && Objects.equals(address, customer.address);
     }
 
