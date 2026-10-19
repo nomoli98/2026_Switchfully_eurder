@@ -11,7 +11,7 @@ public class RequestException extends RuntimeException {
     }
 
     public static RequestException invalidField(String field) {
-        return new RequestException("This field (" + field + ") is invalid in.");
+        return new RequestException("This field (" + field + ") is invalid.");
     }
 
 

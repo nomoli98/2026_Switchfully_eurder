@@ -14,11 +14,6 @@ public class CustomerService {
     private final CustomerRepository repository;
     private final CustomerValidator validator;
 
-    public CustomerService() {
-        this.repository = new CustomerRepository();
-        this.validator = new CustomerValidator();
-    }
-
     public CustomerService(CustomerRepository repository, CustomerValidator validator) {
         this.repository = repository;
         this.validator = validator;
