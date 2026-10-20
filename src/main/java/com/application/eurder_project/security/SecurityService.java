@@ -1,6 +1,6 @@
 package com.application.eurder_project.security;
 
-import com.application.eurder_project.domain.User;
+import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.UserRepository;
 import org.springframework.stereotype.Service;
 

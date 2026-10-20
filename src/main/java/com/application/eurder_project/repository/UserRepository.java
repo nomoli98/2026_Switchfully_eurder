@@ -1,6 +1,6 @@
 package com.application.eurder_project.repository;
 
-import com.application.eurder_project.domain.User;
+import com.application.eurder_project.domain.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -12,9 +12,7 @@ public class UserRepository extends FakeDatabase<User> {
 
     private final Logger logger = LoggerFactory.getLogger(UserRepository.class);
 
-
-    public UserRepository() {
-    }
+    public UserRepository() {}
 
     public UserRepository(List<User> users) {
         users.forEach(this::save);

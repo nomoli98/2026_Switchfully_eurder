@@ -1,7 +1,7 @@
 package com.application.eurder_project.controller;
 
-import com.application.eurder_project.domain.Role;
-import com.application.eurder_project.domain.User;
+import com.application.eurder_project.domain.user.Role;
+import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.UserRepository;
 import com.application.eurder_project.service.request.PostUserRequest;
 import io.restassured.RestAssured;

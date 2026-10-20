@@ -1,4 +1,4 @@
-package com.application.eurder_project.domain;
+package com.application.eurder_project.domain.user;
 
 import com.application.eurder_project.security.Permission;
 

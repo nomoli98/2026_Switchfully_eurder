@@ -1,6 +1,6 @@
 package com.application.eurder_project.service.request;
 
-import com.application.eurder_project.domain.Role;
+import com.application.eurder_project.domain.user.Role;
 
 public record PostUserRequest(String firstname,
                               String lastname,
