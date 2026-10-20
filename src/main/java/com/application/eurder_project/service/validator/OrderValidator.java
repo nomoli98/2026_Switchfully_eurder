@@ -1,5 +1,6 @@
 package com.application.eurder_project.service.validator;
 
+import com.application.eurder_project.service.exception.RequestException;
 import com.application.eurder_project.service.request.PostOrderRequest;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ public class OrderValidator extends Validator {
     }
 
     public void isValidRequest(PostOrderRequest request) {
-        userValidator.existingUser(request.user());
-        itemValidator.validItemGroup(request.items());
+        if (request == null) throw RequestException.notFilledInField("order");
+        itemValidator.validItemGroups(request.items());
     }
 }

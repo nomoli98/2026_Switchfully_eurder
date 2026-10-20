@@ -1,9 +1,12 @@
 package com.application.eurder_project.service;
 
+import com.application.eurder_project.domain.ItemGroup;
 import com.application.eurder_project.domain.Order;
+import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.ItemRepository;
 import com.application.eurder_project.repository.OrderRepository;
 import com.application.eurder_project.repository.UserRepository;
+import com.application.eurder_project.security.UnauthorizedException;
 import com.application.eurder_project.service.request.PostOrderRequest;
 import com.application.eurder_project.service.validator.OrderValidator;
 import org.slf4j.Logger;
@@ -11,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class OrderService {
@@ -33,10 +37,16 @@ public class OrderService {
 
     public List<Order> getAllItems() {return orderRepository.getAll();}
 
-    public Order createOrder(PostOrderRequest request){
+    public Order createOrder(UUID userId, PostOrderRequest request) {
         logger.info("Verifying inputs.");
         validator.isValidRequest(request);
         logger.info("Input validated.");
-        return orderRepository.save(new Order(request.items(), request.user()));
+        User user = userRepository.get(userId).orElseThrow(UnauthorizedException::invalidCredentials);
+        List<ItemGroup> groups = request.items().stream()
+                                        .map(r -> new ItemGroup(itemRepository.get(r.itemId()).orElseThrow(), r.amount()))
+                                        .toList();
+
+        groups.forEach(g -> g.getItem().setStock(g.getItem().getStock() - g.getAmount()));
+        return orderRepository.save(new Order(groups, user));
     }
 }

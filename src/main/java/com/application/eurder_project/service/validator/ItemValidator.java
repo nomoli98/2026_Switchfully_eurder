@@ -5,10 +5,12 @@ import com.application.eurder_project.domain.ItemGroup;
 import com.application.eurder_project.repository.ItemRepository;
 import com.application.eurder_project.service.exception.ExistenceException;
 import com.application.eurder_project.service.exception.RequestException;
+import com.application.eurder_project.service.request.PostItemGroupRequest;
 import com.application.eurder_project.service.request.PostItemRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class ItemValidator extends Validator{
@@ -37,14 +39,16 @@ public class ItemValidator extends Validator{
 
     }
 
-    public void validItemGroup(List<ItemGroup> items) {
-        items.forEach(i -> {
-            existingItem(i.getItem());
-            if(isNotFilledIn(i.getAmount())) throw RequestException.notFilledInField("item " + i.getItem().getName() + "amount in order");
+    public void validItemGroups(List<PostItemGroupRequest> groups) {
+        if (groups == null || groups.isEmpty()) throw RequestException.notFilledInField("order items");
+        groups.forEach(g -> {
+            if (g == null || g.itemId() == null) throw RequestException.notFilledInField("item id in order");
+            existingItem(g.itemId());
+            if (isNegative(g.amount())) throw RequestException.negativeNumber("item amount in order");
         });
     }
 
-    public void existingItem(Item item){
-        itemRepository.get(item.getId()).orElseThrow(() -> ExistenceException.NotInDatabase("item"));
+    public void existingItem(UUID itemId) {
+        itemRepository.get(itemId).orElseThrow(() -> ExistenceException.NotInDatabase("item"));
     }
 }

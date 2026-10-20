@@ -37,14 +37,6 @@ public class Order {
         return user;
     }
 
-    public double calculatePrice() {
-        double totalPrice = 0;
-        for (ItemGroup i : getItems()) {
-            totalPrice += i.calculateGroupPrice();
-        }
-        return totalPrice;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
