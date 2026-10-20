@@ -1,6 +1,7 @@
 package com.application.eurder_project.controller;
 
 import com.application.eurder_project.domain.Role;
+import com.application.eurder_project.domain.User;
 import com.application.eurder_project.repository.UserRepository;
 import com.application.eurder_project.service.request.PostUserRequest;
 import io.restassured.RestAssured;
@@ -15,22 +16,25 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.UUID;
 import java.util.stream.Stream;
 
-import static com.application.eurder_project.controller.CustomerTestData.validRequest;
+import static com.application.eurder_project.controller.UserTestData.validRequest;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CustomerControllerTest {
+class UserControllerTest {
 
     private static final String CUSTOMERS = "/customers";
+    private static final String AUTHORIZATION = "Authorization";
+    private User admin;
+    private UUID adminId;
 
     @Autowired
-    private UserRepository customerRepository;
+    private UserRepository userRepository;
 
     @LocalServerPort
     private int port;
@@ -38,24 +42,34 @@ class CustomerControllerTest {
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
+        admin = UserTestData.validAdmin();
+        adminId = admin.getId();
+        userRepository.save(admin);
     }
 
     @AfterEach
     void tearDown() {
         RestAssured.reset();
+        userRepository.deleteAll();
     }
 
     @Test
-    @DisplayName("GetAll -> Empty list")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    @DisplayName("GetAll -> Only get admin")
     void getAllCustomers_whenNoCustomersExist_returnsEmptyList() {
-        given().when().get(CUSTOMERS).then().statusCode(200).contentType(ContentType.JSON).body("", hasSize(0));
+        given().header(AUTHORIZATION, adminId)
+               .when()
+               .get(CUSTOMERS)
+               .then()
+               .statusCode(200)
+               .contentType(ContentType.JSON)
+               .body("", hasSize(1));
     }
 
     @Test
     @DisplayName("CreateCustomer -> 201 and Customer")
     void createCustomer_withValidRequest_returns201AndTheCreatedCustomer() {
-        given().contentType(ContentType.JSON)
+        given().header(AUTHORIZATION, adminId)
+               .contentType(ContentType.JSON)
                .body(validRequest())
                .when()
                .post(CUSTOMERS)
@@ -74,7 +88,8 @@ class CustomerControllerTest {
     }
 
     private String postCustomer(PostUserRequest request) {
-        return given().contentType(ContentType.JSON)
+        return given().header(AUTHORIZATION, adminId)
+                      .contentType(ContentType.JSON)
                       .body(request)
                       .when()
                       .post(CUSTOMERS)
@@ -86,25 +101,25 @@ class CustomerControllerTest {
 
     @Test
     @DisplayName("CreateCustomers -> GetAll -> List of Customers")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void createdCustomers_appearInTheCustomerList() {
         String janeId = postCustomer(validRequest("Jane", "jane@example.com"));
         String johnId = postCustomer(validRequest("John", "john@example.com"));
 
         given().when()
+               .header(AUTHORIZATION, adminId)
                .get(CUSTOMERS)
                .then()
                .statusCode(200)
-               .body("", hasSize(2))
-               .body("id", containsInAnyOrder(janeId, johnId))
-               .body("email", containsInAnyOrder("jane@example.com", "john@example.com"));
+               .body("", hasSize(3))
+               .body("id", containsInAnyOrder(janeId, johnId, adminId.toString()))
+               .body("email", containsInAnyOrder("jane@example.com", "john@example.com", admin.getEmail()));
     }
 
     @Test
     @DisplayName("BadRequest -> Not Stored")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void invalidRequest_isNotStored() {
-        given().contentType(ContentType.JSON)
+        given().header(AUTHORIZATION, adminId)
+               .contentType(ContentType.JSON)
                .body(new PostUserRequest(null,
                                          "Doe",
                                          "jane@example.com",
@@ -120,7 +135,7 @@ class CustomerControllerTest {
                .then()
                .statusCode(400);
 
-        given().when().get(CUSTOMERS).then().body("$", hasSize(0));
+        given().when().header(AUTHORIZATION, adminId).get(CUSTOMERS).then().body("$", hasSize(1));
     }
 
     static Stream<Arguments> invalidRequests() {
@@ -339,7 +354,13 @@ class CustomerControllerTest {
     @MethodSource("invalidRequests")
     @DisplayName("Invalid Request fields -> 400")
     void createCustomer_withInvalidRequest_returns400(String description, PostUserRequest request) {
-        given().contentType(ContentType.JSON).body(request).when().post(CUSTOMERS).then().statusCode(400);
+        given().header(AUTHORIZATION, adminId)
+               .contentType(ContentType.JSON)
+               .body(request)
+               .when()
+               .post(CUSTOMERS)
+               .then()
+               .statusCode(400);
     }
 
 }

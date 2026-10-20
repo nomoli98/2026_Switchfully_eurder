@@ -41,6 +41,11 @@ public class FakeDatabase<T> {
         return item;
     }
 
+    public void deleteAll(){
+        logger.debug("Clear database");
+        storedItems.clear();
+    }
+
     protected Optional<T> getOptional(Predicate<T> predicate) {
         return storedItems.values().stream().filter(predicate).findAny();
     }
