@@ -5,12 +5,12 @@ import com.application.eurder_project.service.request.PostOrderRequest;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderValidator extends Validator {
+public class PostOrderValidator extends Validator {
 
-    private final UserValidator userValidator;
-    private final ItemValidator itemValidator;
+    private final PostUserValidator userValidator;
+    private final PostItemValidator itemValidator;
 
-    public OrderValidator(UserValidator userValidator, ItemValidator itemValidator) {
+    public PostOrderValidator(PostUserValidator userValidator, PostItemValidator itemValidator) {
         this.userValidator = userValidator;
         this.itemValidator = itemValidator;
     }

@@ -1,7 +1,5 @@
 package com.application.eurder_project.service.validator;
 
-import com.application.eurder_project.domain.Item;
-import com.application.eurder_project.domain.ItemGroup;
 import com.application.eurder_project.repository.ItemRepository;
 import com.application.eurder_project.service.exception.ExistenceException;
 import com.application.eurder_project.service.exception.RequestException;
@@ -13,20 +11,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class ItemValidator extends Validator{
+public class PostItemValidator extends Validator{
 
     private final ItemRepository itemRepository;
 
-    public ItemValidator(ItemRepository itemRepository) {super();
+    public PostItemValidator(ItemRepository itemRepository) {super();
         this.itemRepository = itemRepository;
-    }
-
-    public boolean isNegative(double numberToVerify){
-        return numberToVerify <= 0;
-    }
-
-    public boolean isNegative(int numberToVerify){
-        return numberToVerify <= 0;
     }
 
     public void isValidRequest(PostItemRequest request){

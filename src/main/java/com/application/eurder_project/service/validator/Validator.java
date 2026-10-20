@@ -19,4 +19,12 @@ public abstract class Validator {
     public boolean isNotFilledIn(Role role) {
         return role == null;
     }
+
+    public boolean isNegative(double numberToVerify){
+        return numberToVerify <= 0;
+    }
+
+    public boolean isNegative(int numberToVerify){
+        return numberToVerify <= 0;
+    }
 }

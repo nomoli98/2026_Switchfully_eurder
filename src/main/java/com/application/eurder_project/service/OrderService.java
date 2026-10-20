@@ -8,7 +8,7 @@ import com.application.eurder_project.repository.OrderRepository;
 import com.application.eurder_project.repository.UserRepository;
 import com.application.eurder_project.security.UnauthorizedException;
 import com.application.eurder_project.service.request.PostOrderRequest;
-import com.application.eurder_project.service.validator.OrderValidator;
+import com.application.eurder_project.service.validator.PostOrderValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,14 +21,14 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    private final OrderValidator validator;
+    private final PostOrderValidator validator;
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
 
     public OrderService(OrderRepository orderRepository,
                         ItemRepository itemRepository,
                         UserRepository userRepository,
-                        OrderValidator validator) {
+                        PostOrderValidator validator) {
         this.orderRepository = orderRepository;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;

@@ -5,7 +5,7 @@ import com.application.eurder_project.domain.user.Role;
 import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.UserRepository;
 import com.application.eurder_project.service.exception.ExistenceException;
-import com.application.eurder_project.service.validator.UserValidator;
+import com.application.eurder_project.service.validator.PostUserValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceTest {
 
     private final UserRepository repository = new UserRepository();
-    private final UserValidator validator = new UserValidator(repository);
+    private final PostUserValidator validator = new PostUserValidator(repository);
     private final UserService service = new UserService(repository, validator);
     private User admin;
 

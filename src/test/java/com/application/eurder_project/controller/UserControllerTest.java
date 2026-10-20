@@ -381,6 +381,18 @@ class UserControllerTest {
     }
     
     @Test
+    @DisplayName("GetOneUser with good Authorization -> Ok")
+    void getOneById_withValidAuthorization_returns200(){
+        userRepository.save(customer);
+        given().header(AUTHORIZATION, adminId)
+               .contentType(ContentType.JSON)
+               .when()
+               .get(USERS + "/" + customerId)
+               .then()
+               .statusCode(200);
+    }
+
+    @Test
     @DisplayName("GetOneUser with bad Authorization -> Forbidden")
     void getOneById_withInvalidAuthorization_returns403(){
         userRepository.save(customer);

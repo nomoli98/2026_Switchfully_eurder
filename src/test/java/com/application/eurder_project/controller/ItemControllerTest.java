@@ -1,4 +1,7 @@
 package com.application.eurder_project.controller;
+
+import com.application.eurder_project.controller.dto.ItemDto;
+import com.application.eurder_project.domain.Item;
 import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.ItemRepository;
 import com.application.eurder_project.repository.UserRepository;
@@ -66,7 +69,7 @@ class ItemControllerTest {
         itemRepository.reset();
     }
 
-    private String postItem (PostItemRequest request) {
+    private String postItem(PostItemRequest request) {
         return given().header(AUTHORIZATION, adminId)
                       .contentType(ContentType.JSON)
                       .body(request)
@@ -81,7 +84,12 @@ class ItemControllerTest {
     @Test
     @DisplayName("GetAll -> EmptyList")
     void getAllItems_whenNoCustomersExist_returnsEmptyList() {
-        given().when().get(ITEMS).then().statusCode(200).contentType(ContentType.JSON).body("", hasSize(0));
+        given().when()
+               .get(ITEMS)
+               .then()
+               .statusCode(200)
+               .contentType(ContentType.JSON)
+               .body("", hasSize(0));
     }
 
     @Test
@@ -118,9 +126,6 @@ class ItemControllerTest {
 
 
     static Stream<Arguments> invalidRequests() {
-        String email = "jane.doe@example.com";
-        String phone = "0471234567";
-
         return Stream.of(
                 arguments("name is null",
                           new PostItemRequest(null, "Object to pour liquid", 10.99, 5)),
@@ -134,7 +139,7 @@ class ItemControllerTest {
                           new PostItemRequest("Cup", "Object to pour liquid", 10.99, 0)),
                 arguments("stock is negative",
                           new PostItemRequest("Cup", "Object to pour liquid", 10.99, -5))
-                );
+                        );
     }
 
     @ParameterizedTest(name = "{0} -> 400")
@@ -149,4 +154,29 @@ class ItemControllerTest {
                .then()
                .statusCode(400);
     }
+
+    @Test
+    @DisplayName("GetOneItem needs no authorization -> Ok")
+    void getOneById_withValidAuthorization_returns200() {
+
+        ItemDto item = given().header(AUTHORIZATION, adminId)
+                             .contentType(ContentType.JSON)
+                             .body(validRequest())
+                             .when()
+                             .post(ITEMS)
+                             .then()
+                             .statusCode(201)
+                             .extract()
+                             .as(ItemDto.class);
+
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(ITEMS + "/" + item.id())
+                .then()
+                .statusCode(200)
+                .body("id", equalTo(item.id().toString()))
+                .body("name", equalTo("Cup"));
+    }
+
 }
