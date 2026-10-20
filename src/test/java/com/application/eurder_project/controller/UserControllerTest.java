@@ -32,6 +32,8 @@ class UserControllerTest {
     private static final String AUTHORIZATION = "Authorization";
     private User admin;
     private UUID adminId;
+    private User customer;
+    private UUID customerId;
 
     @Autowired
     private UserRepository userRepository;
@@ -43,7 +45,9 @@ class UserControllerTest {
     void setUp() {
         RestAssured.port = port;
         admin = UserTestData.validAdmin();
+        customer = UserTestData.validCustomer();
         adminId = admin.getId();
+        customerId = customer.getId();
         userRepository.save(admin);
     }
 
@@ -55,7 +59,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("GetAll -> Only get admin")
-    void getAllCustomers_whenNoCustomersExist_returnsOnlyTheAdmin() {
+    void getAllUsers_whenNoUsersExist_returnsOnlyTheAdmin() {
         given().header(AUTHORIZATION, adminId)
                .when()
                .get(USERS)
@@ -66,8 +70,8 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("CreateCustomer -> 201 and Customer")
-    void createCustomer_withValidRequest_returns201AndTheCreatedCustomer() {
+    @DisplayName("createUser -> 201 and User")
+    void createUser_withValidRequest_returns201AndTheCreatedUser() {
         given().header(AUTHORIZATION, adminId)
                .contentType(ContentType.JSON)
                .body(validRequest())
@@ -87,7 +91,7 @@ class UserControllerTest {
                .body("address.country", equalTo("Belgium"));
     }
 
-    private String postCustomer(PostUserRequest request) {
+    private String postUser(PostUserRequest request) {
         return given().header(AUTHORIZATION, adminId)
                       .contentType(ContentType.JSON)
                       .body(request)
@@ -100,10 +104,10 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("CreateCustomers -> GetAll -> List of Customers")
-    void createdCustomers_appearInTheCustomerList() {
-        String janeId = postCustomer(validRequest("Jane", "jane@example.com"));
-        String johnId = postCustomer(validRequest("John", "john@example.com"));
+    @DisplayName("createUsers -> GetAll -> List of Users")
+    void createdUsers_appearInTheUserList() {
+        String janeId = postUser(validRequest("Jane", "jane@example.com"));
+        String johnId = postUser(validRequest("John", "john@example.com"));
 
         given().when()
                .header(AUTHORIZATION, adminId)
@@ -353,7 +357,7 @@ class UserControllerTest {
     @ParameterizedTest(name = "{0} -> 400")
     @MethodSource("invalidRequests")
     @DisplayName("Invalid Request fields -> 400")
-    void createCustomer_withInvalidRequest_returns400(String description, PostUserRequest request) {
+    void createUser_withInvalidRequest_returns400(String description, PostUserRequest request) {
         given().header(AUTHORIZATION, adminId)
                .contentType(ContentType.JSON)
                .body(request)
@@ -361,6 +365,31 @@ class UserControllerTest {
                .post(USERS)
                .then()
                .statusCode(400);
+    }
+    
+    @Test
+    @DisplayName("CreateUser with bad Authorization -> Forbidden")
+    void createUser_withInvalidAuthorization_returns403(){
+        userRepository.save(customer);
+            given().header(AUTHORIZATION, customerId)
+                   .contentType(ContentType.JSON)
+                   .body(validRequest())
+                   .when()
+                   .post(USERS)
+                   .then()
+                   .statusCode(403);
+    }
+    
+    @Test
+    @DisplayName("GetOneUser with bad Authorization -> Forbidden")
+    void getOneById_withInvalidAuthorization_returns403(){
+        userRepository.save(customer);
+        given().header(AUTHORIZATION, customerId)
+               .contentType(ContentType.JSON)
+               .when()
+               .get(USERS + "/" + adminId)
+               .then()
+               .statusCode(403);
     }
 
 }

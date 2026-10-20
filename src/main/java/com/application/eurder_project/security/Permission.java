@@ -7,5 +7,6 @@ public enum Permission {
     CREATE_ITEM,
     VIEW_ALL_ORDERS,
     CREATE_ORDER,
+    VIEW_USER_BY_ID
 
 }

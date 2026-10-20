@@ -6,6 +6,7 @@ import java.util.List;
 
 public enum Role {
     ADMIN(List.of(Permission.VIEW_ALL_USERS,
+                  Permission.VIEW_USER_BY_ID,
                   Permission.CREATE_USER,
                   Permission.CREATE_ITEM,
                   Permission.VIEW_ALL_ITEMS,

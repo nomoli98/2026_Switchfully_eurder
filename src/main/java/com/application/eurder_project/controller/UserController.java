@@ -35,25 +35,48 @@ public class UserController {
 
     @SecurityRequirement(name = "Authorization")
     @GetMapping
-    public List<UserDto> getAllUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) UUID id) {
-        security.validateAuthorization(id, Permission.VIEW_ALL_USERS);
+    public List<UserDto> getAllUser(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
+            UUID authorization) {
+        security.validateAuthorization(authorization, Permission.VIEW_ALL_USERS);
         logger.info("Fetching all users.");
         return mapper.toDtos(service.getAllUsers());
     }
 
-    @SecurityRequirement(name="Authorization")
+    @SecurityRequirement(name = "Authorization")
     @Operation(summary = "Create a user")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "User created"),
-            @ApiResponse(responseCode = "401", description = "Missing or invalid Authorization header"),
+            @ApiResponse(responseCode = "401",
+                         description = "Missing or invalid Authorization header"),
             @ApiResponse(responseCode = "403", description = "Not allowed to create users")
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) UUID id,
-                              @RequestBody PostUserRequest request) {
-        security.validateAuthorization(id, Permission.CREATE_USER);
+    public UserDto createUser(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
+            UUID authorization,
+            @RequestBody PostUserRequest request) {
+        security.validateAuthorization(authorization, Permission.CREATE_USER);
         logger.info("Creating a new user.");
         return mapper.toDto(service.createUser(request));
+    }
+
+    @SecurityRequirement(name = "Authorization")
+    @Operation(summary = "Get a user by his id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User found"),
+            @ApiResponse(responseCode = "400", description = "User not found"),
+            @ApiResponse(responseCode = "403", description = "Not allowed to view users")
+    })
+    @GetMapping(path = "{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto getUserById(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
+            UUID authorization,
+            @PathVariable("id") UUID userId) {
+        security.validateAuthorization(authorization, Permission.VIEW_USER_BY_ID);
+        logger.info("Fetching searched user.");
+        return mapper.toDto(service.getUserById(userId));
     }
 }

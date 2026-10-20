@@ -3,6 +3,7 @@ package com.application.eurder_project.service;
 import com.application.eurder_project.domain.user.Address;
 import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.UserRepository;
+import com.application.eurder_project.service.exception.ExistenceException;
 import com.application.eurder_project.service.request.PostUserRequest;
 import com.application.eurder_project.service.validator.UserValidator;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -24,6 +26,11 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return repository.getAll();
+    }
+
+    public User getUserById(UUID id) {
+        return repository.get(id)
+                         .orElseThrow(() -> ExistenceException.NotInDatabase("user"));
     }
 
     public User createUser(PostUserRequest request) {
