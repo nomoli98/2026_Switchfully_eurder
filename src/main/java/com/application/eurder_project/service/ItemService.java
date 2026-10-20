@@ -48,7 +48,7 @@ public class ItemService {
 
     public Item updateItem(UUID itemId, PutItemRequest request) {
         logger.info("Verifying inputs");
-        putValidator.isValidRequest(request);
+        putValidator.isValidRequest(itemId, request);
         logger.info("Input validated.");
         return repository.updateItem(itemId, getItemById(itemId), new Item(request.name(),
                                                                            request.description(),
