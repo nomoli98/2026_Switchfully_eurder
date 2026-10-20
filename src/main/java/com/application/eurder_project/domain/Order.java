@@ -4,18 +4,25 @@ import com.application.eurder_project.domain.user.User;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Order {
+    private final UUID id;
     private double totalPrice;
     private List<ItemGroup> items;
     private final User customer;
 
     public Order(double totalPrice, List<ItemGroup> items, User customer) {
+        this.id = UUID.randomUUID();
         for (ItemGroup i : items) {
             this.totalPrice += i.getGroupPrice();
         }
         this.items = items;
         this.customer = customer;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public double getTotalPrice() {
@@ -30,9 +37,9 @@ public class Order {
         return customer;
     }
 
-    public double calculatePrice(){
+    public double calculatePrice() {
         double totalPrice = 0;
-        for (ItemGroup i : getItems()){
+        for (ItemGroup i : getItems()) {
             totalPrice += i.calculateGroupPrice();
         }
         return totalPrice;
