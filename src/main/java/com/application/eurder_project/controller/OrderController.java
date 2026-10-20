@@ -39,7 +39,7 @@ public class OrderController {
     public List<OrderDto> getAllOrder(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) UUID id) {
         security.validateAuthorization(id, Permission.VIEW_ALL_ORDERS);
         logger.info("Fetching all orders.");
-        return mapper.toDtos(service.getAllItems());
+        return mapper.toDtos(service.getAllOrders());
     }
 
     @SecurityRequirement(name="Authorization")

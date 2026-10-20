@@ -1,6 +1,5 @@
 package com.application.eurder_project.repository;
 
-import com.application.eurder_project.domain.Item;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,4 +53,10 @@ public class FakeDatabase<T> {
     protected Optional<T> getOptional(Predicate<T> predicate) {
         return storedItems.values().stream().filter(predicate).findAny();
     }
+
+    protected List<T> getAllOptionals(Predicate<T> predicate) {
+        return storedItems.values().stream().filter(predicate).toList();
+    }
+
+
 }

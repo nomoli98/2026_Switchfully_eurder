@@ -7,6 +7,7 @@ import com.application.eurder_project.repository.ItemRepository;
 import com.application.eurder_project.repository.OrderRepository;
 import com.application.eurder_project.repository.UserRepository;
 import com.application.eurder_project.security.UnauthorizedException;
+import com.application.eurder_project.service.exception.ExistenceException;
 import com.application.eurder_project.service.request.PostOrderRequest;
 import com.application.eurder_project.service.validator.PostOrderValidator;
 import org.slf4j.Logger;
@@ -35,15 +36,34 @@ public class OrderService {
         this.validator = validator;
     }
 
-    public List<Order> getAllItems() {return orderRepository.getAll();}
+    public List<Order> getAllOrders() {return orderRepository.getAll();}
+
+    public Order getOneOrderById(UUID id) {
+        return orderRepository.get(id)
+                              .orElseThrow(() -> ExistenceException.NotInDatabase(Order.class.getTypeName()));
+    }
+
+    public List<Order> getOrdersByUser(UUID userId) {
+        logger.info("Verifying user.");
+        User user = userRepository.get(userId)
+                                  .orElseThrow(() -> ExistenceException.NotInDatabase(
+                                          User.class.getTypeName()));
+        logger.info("User validated.");
+        return orderRepository.getByUser(user);
+    }
 
     public Order createOrder(UUID userId, PostOrderRequest request) {
         logger.info("Verifying inputs.");
         validator.isValidRequest(request);
         logger.info("Input validated.");
-        User user = userRepository.get(userId).orElseThrow(UnauthorizedException::invalidCredentials);
-        List<ItemGroup> groups = request.items().stream()
-                                        .map(r -> new ItemGroup(itemRepository.get(r.itemId()).orElseThrow(), r.amount()))
+        User user = userRepository.get(userId)
+                                  .orElseThrow(UnauthorizedException::invalidCredentials);
+        List<ItemGroup> groups = request.items()
+                                        .stream()
+                                        .map(r -> new ItemGroup(itemRepository.get(r.itemId())
+                                                                              .orElseThrow(() -> ExistenceException.NotInDatabase(
+                                                                                      Order.class.getTypeName())),
+                                                                r.amount()))
                                         .toList();
 
         groups.forEach(g -> g.getItem().setStock(g.getItem().getStock() - g.getAmount()));
