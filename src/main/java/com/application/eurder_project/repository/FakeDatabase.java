@@ -1,5 +1,6 @@
 package com.application.eurder_project.repository;
 
+import com.application.eurder_project.domain.Item;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,10 @@ public class FakeDatabase<T> {
         logger.debug("Saving item {} in {} repository", id, item.getClass());
         storedItems.put(id, item);
         return item;
+    }
+
+    protected boolean update(UUID oldItemId ,T oldItem, T updatedItem){
+        return storedItems.replace(oldItemId, oldItem, updatedItem);
     }
 
     public T deleteWithId(UUID id, T item) {

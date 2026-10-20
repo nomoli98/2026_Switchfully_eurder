@@ -1,5 +1,6 @@
 package com.application.eurder_project.domain;
 
+import java.lang.classfile.constantpool.IntegerEntry;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -7,8 +8,8 @@ public class Item {
     private final UUID id;
     private String name;
     private String description;
-    private double price;
-    private int stock;
+    private Double price;
+    private Integer stock;
 
     public Item(String name, String description, double price, int stock) {
         this.id = UUID.randomUUID();

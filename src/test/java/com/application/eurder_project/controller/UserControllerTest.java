@@ -319,13 +319,13 @@ class UserControllerTest {
                                               "1000",
                                               "Belgium",
                                               Role.CUSTOMER)),
-                arguments("street number is 0",
+                arguments("street number is null",
                           new PostUserRequest("Jane",
                                               "Doe",
                                               email,
                                               phone,
                                               "Main Street",
-                                              0,
+                                              null,
                                               "2B",
                                               "1000",
                                               "Belgium",
@@ -380,6 +380,18 @@ class UserControllerTest {
                    .statusCode(403);
     }
     
+    @Test
+    @DisplayName("GetOneUser with good Authorization -> Ok")
+    void getOneById_withValidAuthorization_returns200(){
+        userRepository.save(customer);
+        given().header(AUTHORIZATION, adminId)
+               .contentType(ContentType.JSON)
+               .when()
+               .get(USERS + "/" + customerId)
+               .then()
+               .statusCode(200);
+    }
+
     @Test
     @DisplayName("GetOneUser with bad Authorization -> Forbidden")
     void getOneById_withInvalidAuthorization_returns403(){

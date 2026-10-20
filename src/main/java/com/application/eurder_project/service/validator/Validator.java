@@ -8,15 +8,25 @@ public abstract class Validator {
         return string == null || string.isBlank();
     }
 
-    public boolean isNotFilledIn(int number) {
-        return number == 0;
+    public boolean isNotFilledIn(Integer number) {
+        return number == null;
     }
 
-    public boolean isNotFilledIn(double number) {
-        return number == 0;
+    public boolean isNotFilledIn(Double number) {
+        return number == null || number.isNaN();
     }
 
     public boolean isNotFilledIn(Role role) {
         return role == null;
+    }
+
+    public boolean isNegative(Double numberToVerify){
+        if(numberToVerify == null) return false;
+        return numberToVerify <= 0;
+    }
+
+    public boolean isNegative(Integer numberToVerify){
+        if(numberToVerify == null) return false;
+        return numberToVerify <= 0;
     }
 }

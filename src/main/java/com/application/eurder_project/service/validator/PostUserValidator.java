@@ -14,14 +14,14 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Component
-public class UserValidator extends Validator {
+public class PostUserValidator extends Validator {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
     private static final Pattern PHONE_PATTERN = Pattern.compile("^\\d{10}$");
     private final UserRepository userRepository;
 
-    public UserValidator(UserRepository userRepository) {super();
+    public PostUserValidator(UserRepository userRepository) {super();
         this.userRepository = userRepository;
     }
 
