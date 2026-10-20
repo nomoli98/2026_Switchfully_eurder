@@ -5,7 +5,7 @@ public class ForbiddenException extends RuntimeException {
         super(message);
     }
 
-    public static Exception invalidPermission() {
-        return null;
+    public static ForbiddenException invalidPermission() {
+        return new ForbiddenException("You do not have the authorizations to go further.");
     }
 }

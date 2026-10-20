@@ -8,11 +8,17 @@ import java.util.List;
 
 @Component
 public class OrderMapper {
+
+    private final ItemGroupMapper itemGroupMapper;
+
+    public OrderMapper(ItemGroupMapper itemGroupMapper) {this.itemGroupMapper = itemGroupMapper;}
+
     public OrderDto toDto(Order order){
         return new OrderDto(order.getId(),
                             order.getTotalPrice(),
-                            order.getItems(),
-                            order.getUser());
+                            itemGroupMapper.toDtos(order.getItems()),
+                            order.getUser().getId()
+        );
     }
 
     public List<OrderDto> toDtos(List<Order> orders){

@@ -28,7 +28,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerTest {
 
-    private static final String CUSTOMERS = "/customers";
+    private static final String USERS = "/users";
     private static final String AUTHORIZATION = "Authorization";
     private User admin;
     private UUID adminId;
@@ -58,7 +58,7 @@ class UserControllerTest {
     void getAllCustomers_whenNoCustomersExist_returnsOnlyTheAdmin() {
         given().header(AUTHORIZATION, adminId)
                .when()
-               .get(CUSTOMERS)
+               .get(USERS)
                .then()
                .statusCode(200)
                .contentType(ContentType.JSON)
@@ -72,7 +72,7 @@ class UserControllerTest {
                .contentType(ContentType.JSON)
                .body(validRequest())
                .when()
-               .post(CUSTOMERS)
+               .post(USERS)
                .then()
                .statusCode(201)
                .body("id", notNullValue())
@@ -92,7 +92,7 @@ class UserControllerTest {
                       .contentType(ContentType.JSON)
                       .body(request)
                       .when()
-                      .post(CUSTOMERS)
+                      .post(USERS)
                       .then()
                       .statusCode(201)
                       .extract()
@@ -107,7 +107,7 @@ class UserControllerTest {
 
         given().when()
                .header(AUTHORIZATION, adminId)
-               .get(CUSTOMERS)
+               .get(USERS)
                .then()
                .statusCode(200)
                .body("", hasSize(3))
@@ -131,11 +131,11 @@ class UserControllerTest {
                                          "Belgium",
                                          Role.CUSTOMER))
                .when()
-               .post(CUSTOMERS)
+               .post(USERS)
                .then()
                .statusCode(400);
 
-        given().when().header(AUTHORIZATION, adminId).get(CUSTOMERS).then().body("$", hasSize(1));
+        given().when().header(AUTHORIZATION, adminId).get(USERS).then().body("$", hasSize(1));
     }
 
     static Stream<Arguments> invalidRequests() {
@@ -358,7 +358,7 @@ class UserControllerTest {
                .contentType(ContentType.JSON)
                .body(request)
                .when()
-               .post(CUSTOMERS)
+               .post(USERS)
                .then()
                .statusCode(400);
     }

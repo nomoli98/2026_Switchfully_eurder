@@ -1,14 +1,11 @@
 package com.application.eurder_project.controller;
 
-import com.application.eurder_project.controller.dto.ItemDto;
 import com.application.eurder_project.controller.dto.OrderDto;
-import com.application.eurder_project.controller.dto.UserDto;
 import com.application.eurder_project.controller.mapper.OrderMapper;
 import com.application.eurder_project.security.Permission;
 import com.application.eurder_project.security.SecurityService;
 import com.application.eurder_project.service.OrderService;
 import com.application.eurder_project.service.request.PostOrderRequest;
-import com.application.eurder_project.service.request.PostUserRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
