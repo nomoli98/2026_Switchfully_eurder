@@ -1,6 +1,6 @@
 package com.application.eurder_project.repository;
 
-import com.application.eurder_project.domain.User;
+import com.application.eurder_project.domain.users.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;

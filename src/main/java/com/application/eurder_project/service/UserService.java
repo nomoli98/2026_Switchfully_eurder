@@ -1,8 +1,8 @@
 package com.application.eurder_project.service;
 
 import com.application.eurder_project.controller.UserController;
-import com.application.eurder_project.domain.Address;
-import com.application.eurder_project.domain.User;
+import com.application.eurder_project.domain.users.Address;
+import com.application.eurder_project.domain.users.User;
 import com.application.eurder_project.repository.UserRepository;
 import com.application.eurder_project.service.exception.RequestException;
 import com.application.eurder_project.service.request.PostUserRequest;
