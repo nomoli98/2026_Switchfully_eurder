@@ -50,12 +50,12 @@ class UserControllerTest {
     @AfterEach
     void tearDown() {
         RestAssured.reset();
-        userRepository.deleteAll();
+        userRepository.reset();
     }
 
     @Test
     @DisplayName("GetAll -> Only get admin")
-    void getAllCustomers_whenNoCustomersExist_returnsEmptyList() {
+    void getAllCustomers_whenNoCustomersExist_returnsOnlyTheAdmin() {
         given().header(AUTHORIZATION, adminId)
                .when()
                .get(CUSTOMERS)

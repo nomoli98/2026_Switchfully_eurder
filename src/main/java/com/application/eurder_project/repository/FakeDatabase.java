@@ -41,8 +41,8 @@ public class FakeDatabase<T> {
         return item;
     }
 
-    public void deleteAll(){
-        logger.debug("Clear database");
+    public void reset(){
+        logger.debug("Reset table");
         storedItems.clear();
     }
 
