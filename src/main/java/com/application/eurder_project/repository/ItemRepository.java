@@ -10,8 +10,6 @@ import java.util.List;
 @Repository
 public class ItemRepository extends FakeDatabase<Item> {
 
-    private final Logger logger = LoggerFactory.getLogger(ItemRepository.class);
-
     public ItemRepository() {}
 
     public ItemRepository(List<Item> items) {items.forEach(this::save);}

@@ -6,7 +6,7 @@ public class RequestException extends RuntimeException {
         super(s);
     }
 
-    public static RequestException notFilledOutField(String field) {
+    public static RequestException notFilledInField(String field) {
         return new RequestException("This field (" + field + ") must be filled in.");
     }
 

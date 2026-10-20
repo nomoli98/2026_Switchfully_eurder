@@ -50,7 +50,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.CREATED)
     public ItemDto createUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) UUID id,
                               @RequestBody PostItemRequest request) {
-        security.validateAuthorization(id, Permission.CREATE_USER);
+        security.validateAuthorization(id, Permission.CREATE_ITEM);
         logger.info("Creating a new user.");
         return mapper.toDto(service.createItem(request));
     }

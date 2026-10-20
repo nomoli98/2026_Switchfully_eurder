@@ -38,6 +38,10 @@ public class Item {
         return stock;
     }
 
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

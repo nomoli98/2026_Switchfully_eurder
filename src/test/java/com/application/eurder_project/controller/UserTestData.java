@@ -41,4 +41,13 @@ class UserTestData {
                         Role.ADMIN);
     }
 
+    public static User validCustomer() {
+        return new User("Customer",
+                        "Doe",
+                        "customer@example.com",
+                        "0471234567",
+                        new Address("Main Street", 12, "2B", "1000", "Belgium"),
+                        Role.CUSTOMER);
+    }
+
 }

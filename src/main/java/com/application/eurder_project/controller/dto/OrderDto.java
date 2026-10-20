@@ -1,0 +1,8 @@
+package com.application.eurder_project.controller.dto;
+
+
+import java.util.List;
+import java.util.UUID;
+
+public record OrderDto(UUID id, double totalPrice, List<ItemGroupDto> items, UUID userId) {}
+
