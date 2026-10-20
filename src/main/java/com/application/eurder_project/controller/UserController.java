@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("customers")
+@RequestMapping("users")
 public class UserController {
     private final UserService service;
     private final UserMapper mapper;
@@ -37,14 +37,14 @@ public class UserController {
     @GetMapping
     public List<UserDto> getAllUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) UUID id) {
         security.validateAuthorization(id, Permission.VIEW_ALL_USERS);
-        logger.info("Fetching all customers.");
+        logger.info("Fetching all users.");
         return mapper.toDtos(service.getAllUsers());
     }
 
     @SecurityRequirement(name="Authorization")
-    @Operation(summary = "Create a customer")
+    @Operation(summary = "Create a user")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Customer created"),
+            @ApiResponse(responseCode = "201", description = "User created"),
             @ApiResponse(responseCode = "401", description = "Missing or invalid Authorization header"),
             @ApiResponse(responseCode = "403", description = "Not allowed to create users")
     })
@@ -53,7 +53,7 @@ public class UserController {
     public UserDto createUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) UUID id,
                               @RequestBody PostUserRequest request) {
         security.validateAuthorization(id, Permission.CREATE_USER);
-        logger.info("Creating a new customer.");
+        logger.info("Creating a new user.");
         return mapper.toDto(service.createUser(request));
     }
 }

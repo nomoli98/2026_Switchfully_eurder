@@ -8,16 +8,16 @@ import java.util.List;
 
 @Component
 public class UserMapper {
-    public UserDto toDto(User customer) {
-        return new UserDto(customer.getId(),
-                           customer.getFirstname(),
-                           customer.getLastname(),
-                           customer.getEmail(),
-                           customer.getPhoneNumber(),
-                           customer.getAddress());
+    public UserDto toDto(User user) {
+        return new UserDto(user.getId(),
+                           user.getFirstname(),
+                           user.getLastname(),
+                           user.getEmail(),
+                           user.getPhoneNumber(),
+                           user.getAddress());
     }
 
-    public List<UserDto> toDtos(List<User> customers){
-        return customers.stream().map(this::toDto).toList();
+    public List<UserDto> toDtos(List<User> users){
+        return users.stream().map(this::toDto).toList();
     }
 }

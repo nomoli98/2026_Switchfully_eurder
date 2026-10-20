@@ -2,7 +2,9 @@ package com.application.eurder_project.service.validator;
 
 import com.application.eurder_project.service.exception.RequestException;
 import com.application.eurder_project.service.request.PostItemRequest;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ItemValidator extends Validator{
 
     public boolean isNegative(double numberToVerify){

@@ -1,4 +1,6 @@
 package com.application.eurder_project.controller.dto;
 
-public record ItemDto(String name, String description, double price, int stock) {
+import java.util.UUID;
+
+public record ItemDto(UUID id, String name, String description, double price, int stock) {
 }
