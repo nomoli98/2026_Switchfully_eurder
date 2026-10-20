@@ -4,7 +4,7 @@ import com.application.eurder_project.domain.user.Address;
 import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.UserRepository;
 import com.application.eurder_project.service.request.PostUserRequest;
-import com.application.eurder_project.service.validator.CustomerValidator;
+import com.application.eurder_project.service.validator.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,10 +14,10 @@ import java.util.List;
 @Service
 public class UserService {
     private final UserRepository repository;
-    private final CustomerValidator validator;
+    private final UserValidator validator;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(UserRepository repository, CustomerValidator validator) {
+    public UserService(UserRepository repository, UserValidator validator) {
         this.repository = repository;
         this.validator = validator;
     }

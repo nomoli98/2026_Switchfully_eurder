@@ -10,15 +10,15 @@ public class Order {
     private final UUID id;
     private double totalPrice;
     private List<ItemGroup> items;
-    private final User customer;
+    private final User user;
 
-    public Order(double totalPrice, List<ItemGroup> items, User customer) {
+    public Order(List<ItemGroup> items, User user) {
         this.id = UUID.randomUUID();
         for (ItemGroup i : items) {
             this.totalPrice += i.getGroupPrice();
         }
         this.items = items;
-        this.customer = customer;
+        this.user = user;
     }
 
     public UUID getId() {
@@ -33,8 +33,8 @@ public class Order {
         return items;
     }
 
-    public User getCustomer() {
-        return customer;
+    public User getUser() {
+        return user;
     }
 
     public double calculatePrice() {
@@ -50,11 +50,11 @@ public class Order {
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
         return Double.compare(totalPrice, order.totalPrice) == 0 && Objects.equals(items, order.items) &&
-               Objects.equals(customer, order.customer);
+               Objects.equals(user, order.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(totalPrice, items, customer);
+        return Objects.hash(totalPrice, items, user);
     }
 }

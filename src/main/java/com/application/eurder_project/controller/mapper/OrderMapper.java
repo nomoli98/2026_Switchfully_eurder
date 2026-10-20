@@ -12,7 +12,7 @@ public class OrderMapper {
         return new OrderDto(order.getId(),
                             order.getTotalPrice(),
                             order.getItems(),
-                            order.getCustomer());
+                            order.getUser());
     }
 
     public List<OrderDto> toDtos(List<Order> orders){

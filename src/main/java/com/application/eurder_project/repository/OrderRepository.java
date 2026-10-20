@@ -1,9 +1,11 @@
 package com.application.eurder_project.repository;
 
 import com.application.eurder_project.domain.Order;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class OrderRepository extends FakeDatabase<Order> {
 
     public OrderRepository() {}

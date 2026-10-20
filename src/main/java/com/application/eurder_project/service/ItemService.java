@@ -26,7 +26,7 @@ public class ItemService {
     public Item createItem(PostItemRequest request) {
         logger.info("Verifying inputs.");
         validator.isValidRequest(request);
-        logger.debug("Input validated.");
+        logger.info("Input validated.");
         return repository.save(new Item(request.name(), request.description(), request.price(), request.stock()));
     }
 }

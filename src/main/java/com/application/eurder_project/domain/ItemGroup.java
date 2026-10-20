@@ -1,6 +1,8 @@
 package com.application.eurder_project.domain;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Objects;
 
 public class ItemGroup {
@@ -9,12 +11,13 @@ public class ItemGroup {
     private double groupPrice;
     private LocalDate shippingDate;
 
-    public ItemGroup(Item item, int amount, double groupPrice, LocalDate shippingDate) {
+    public ItemGroup(Item item, int amount) {
         this.item = item;
         this.amount = amount;
         this.groupPrice = calculateGroupPrice();
-        this.shippingDate = shippingDate;
+        this.shippingDate = calculateShippingDate();
     }
+
 
     public Item getItem() {
         return item;
@@ -34,6 +37,11 @@ public class ItemGroup {
 
     public double calculateGroupPrice(){
         return amount * item.getPrice();
+    }
+
+    private LocalDate calculateShippingDate() {
+        if(getItem().getStock() < getAmount()) return LocalDate.now().plusDays(7);
+        return LocalDate.now().plusDays(1);
     }
 
     @Override
