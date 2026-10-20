@@ -12,9 +12,7 @@ public class UserRepository extends FakeDatabase<User> {
 
     private final Logger logger = LoggerFactory.getLogger(UserRepository.class);
 
-
-    public UserRepository() {
-    }
+    public UserRepository() {}
 
     public UserRepository(List<User> users) {
         users.forEach(this::save);
