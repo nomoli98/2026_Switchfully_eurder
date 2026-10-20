@@ -1,7 +1,7 @@
 package com.application.eurder_project.controller.mapper;
 
 import com.application.eurder_project.controller.dto.UserDto;
-import com.application.eurder_project.domain.users.User;
+import com.application.eurder_project.domain.user.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

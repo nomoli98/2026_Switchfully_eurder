@@ -1,4 +1,4 @@
-package com.application.eurder_project.domain.users;
+package com.application.eurder_project.domain.user;
 
 public record Address(String street,
                       int number,

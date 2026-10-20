@@ -1,8 +1,8 @@
 package com.application.eurder_project.controller;
 
-import com.application.eurder_project.domain.users.Address;
-import com.application.eurder_project.domain.users.Role;
-import com.application.eurder_project.domain.users.User;
+import com.application.eurder_project.domain.user.Address;
+import com.application.eurder_project.domain.user.Role;
+import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.service.request.PostUserRequest;
 
 class UserTestData {

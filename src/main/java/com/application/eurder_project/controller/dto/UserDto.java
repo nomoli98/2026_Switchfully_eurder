@@ -1,6 +1,6 @@
 package com.application.eurder_project.controller.dto;
 
-import com.application.eurder_project.domain.users.Address;
+import com.application.eurder_project.domain.user.Address;
 
 import java.util.UUID;
 

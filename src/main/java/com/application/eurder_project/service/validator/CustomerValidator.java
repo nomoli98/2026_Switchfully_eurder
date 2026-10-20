@@ -1,7 +1,7 @@
 package com.application.eurder_project.service.validator;
 
-import com.application.eurder_project.domain.users.Address;
-import com.application.eurder_project.domain.users.Role;
+import com.application.eurder_project.domain.user.Address;
+import com.application.eurder_project.domain.user.Role;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
