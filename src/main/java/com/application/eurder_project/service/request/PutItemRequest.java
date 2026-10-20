@@ -3,10 +3,10 @@ package com.application.eurder_project.service.request;
 public class PutItemRequest {
     private String name;
     private String description;
-    private double price;
-    private int stock;
+    private Double price;
+    private Integer stock;
 
-    public PutItemRequest(String name, String description, double price, int stock) {
+    public PutItemRequest(String name, String description, Double price, Integer stock) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -21,11 +21,11 @@ public class PutItemRequest {
         return description;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public int getStock() {
+    public Integer getStock() {
         return stock;
     }
 
@@ -37,11 +37,11 @@ public class PutItemRequest {
         this.description = description;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public void setStock(int stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
 }

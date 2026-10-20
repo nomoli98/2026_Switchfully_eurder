@@ -37,9 +37,9 @@ public class ItemService {
     }
 
     public Item createItem(PostItemRequest request) {
-        logger.info("Verifying inputs.");
+        logger.info("Verifying post inputs.");
         postValidator.isValidRequest(request);
-        logger.info("Input validated.");
+        logger.info("Post input validated.");
         return repository.save(new Item(request.name(),
                                         request.description(),
                                         request.price(),
@@ -47,12 +47,12 @@ public class ItemService {
     }
 
     public Item updateItem(UUID itemId, PutItemRequest request) {
-        logger.info("Verifying inputs");
+        logger.info("Verifying put inputs");
         putValidator.isValidRequest(itemId, request);
-        logger.info("Input validated.");
-        return repository.updateItem(itemId, getItemById(itemId), new Item(request.name(),
-                                                                           request.description(),
-                                                                           request.price(),
-                                                                           request.stock()));
+        logger.info("Put input validated.");
+        return repository.updateItem(itemId, getItemById(itemId), new Item(request.getName(),
+                                                                           request.getDescription(),
+                                                                           request.getPrice(),
+                                                                           request.getStock()));
     }
 }
