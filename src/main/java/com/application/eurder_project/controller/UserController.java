@@ -6,7 +6,10 @@ import com.application.eurder_project.security.Permission;
 import com.application.eurder_project.security.SecurityService;
 import com.application.eurder_project.service.UserService;
 import com.application.eurder_project.service.request.PostUserRequest;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +41,13 @@ public class UserController {
         return mapper.toDtos(service.getAllUsers());
     }
 
-    @SecurityRequirement(name = "Authorization")
+    @SecurityRequirement(name="Authorization")
+    @Operation(summary = "Create a customer")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Customer created"),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid Authorization header"),
+            @ApiResponse(responseCode = "403", description = "Not allowed to create users")
+    })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto createUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) UUID id,
