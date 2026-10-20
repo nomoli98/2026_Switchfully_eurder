@@ -14,5 +14,9 @@ public class RequestException extends RuntimeException {
         return new RequestException("This field (" + field + ") is invalid.");
     }
 
+    public static RequestException negativeNumber(String field) {
+        return new RequestException("The number on the field " + field + " cannot be negative.");
+    }
+
 
 }
