@@ -14,9 +14,9 @@ public class Order {
 
     public Order(List<ItemGroup> items, User user) {
         this.id = UUID.randomUUID();
-        for (ItemGroup i : items) {
-            this.totalPrice += i.getGroupPrice();
-        }
+        this.totalPrice = items.stream()
+                                .mapToDouble(ItemGroup::getGroupPrice)
+                                .sum();
         this.items = items;
         this.user = user;
     }
