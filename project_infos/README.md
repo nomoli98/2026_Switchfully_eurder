@@ -101,7 +101,7 @@ As an admin user I want to add an item so I can expand the list of available ite
 
 As a customer I want to order one or more items.
 
-- An `Order` contains one or more **item groups**
+- An `Eurder` contains one or more **item groups**
 - An `item group` contains a selected item (id), an amount, and a shipping date.
     - The shipping date should be calculated automatically:
         - When we have the item in stock, the shipping date is set to the next day (of the order)
