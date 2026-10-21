@@ -19,7 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.time.LocalDate;
 import java.util.UUID;
+
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -111,7 +114,13 @@ class ReportControllerTest {
     @Test
     @DisplayName("createReport -> returns YOUR report")
     void createReport_asSpecificCustomer_returnsSpecificCustomersReport(){
-        //TODO get a getone for testing
+        given().header(AUTHORIZATION, customerId)
+               .contentType(ContentType.JSON)
+               .when()
+               .get(REPORT)
+               .then()
+               .statusCode(200)
+               .body("eurderDtos[0].userId", equalTo(customerId.toString()));
     }
 
 
