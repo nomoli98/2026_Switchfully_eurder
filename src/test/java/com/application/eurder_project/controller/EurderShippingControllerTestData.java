@@ -1,9 +1,12 @@
 package com.application.eurder_project.controller;
 
+import com.application.eurder_project.domain.Eurder;
 import com.application.eurder_project.domain.Item;
 import com.application.eurder_project.domain.ItemGroup;
+import com.application.eurder_project.domain.user.User;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.time.LocalDate;
+import java.util.List;
 
 class EurderShippingControllerTestData {
     public static ItemGroup itemGroupShipping(Item item, int amount, LocalDate shippingDate) {

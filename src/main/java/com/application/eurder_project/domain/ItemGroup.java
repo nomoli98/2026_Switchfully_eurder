@@ -16,6 +16,13 @@ public class ItemGroup {
         this.shippingDate = calculateShippingDate();
     }
 
+    public ItemGroup(Item item, int amount, LocalDate shippingDate) {
+        this.item = item;
+        this.amount = amount;
+        this.groupPrice = calculateGroupPrice();
+        this.shippingDate = shippingDate;
+    }
+
     public Item getItem() {
         return item;
     }

@@ -8,12 +8,14 @@ import com.application.eurder_project.controller.mapper.ItemGroupMapper;
 import com.application.eurder_project.controller.mapper.ShippingTodayMapper;
 import com.application.eurder_project.domain.Eurder;
 import com.application.eurder_project.domain.ItemGroup;
+import com.application.eurder_project.domain.user.Address;
 import com.application.eurder_project.repository.UserRepository;
 import com.application.eurder_project.security.Permission;
 import com.application.eurder_project.security.SecurityService;
 import com.application.eurder_project.service.EurderService;
 import com.application.eurder_project.service.UserService;
 import com.application.eurder_project.service.request.PostEurderRequest;
+import com.application.eurder_project.service.response.ShippedToday;
 import com.application.eurder_project.service.validator.PostUserValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,13 +36,17 @@ import java.util.UUID;
 public class EurderController {
     private final EurderService service;
     private final EurderMapper mapper;
-    private static final Logger logger = LoggerFactory.getLogger(EurderController.class);
+    private final ShippingTodayMapper shippingTodayMapper;
     private final SecurityService security;
+    private static final Logger logger = LoggerFactory.getLogger(EurderController.class);
 
-
-    public EurderController(EurderService service, EurderMapper mapper, SecurityService security) {
+    public EurderController(EurderService service,
+                            EurderMapper mapper,
+                            ShippingTodayMapper shippingTodayMapper,
+                            SecurityService security) {
         this.service = service;
         this.mapper = mapper;
+        this.shippingTodayMapper = shippingTodayMapper;
         this.security = security;
     }
 
@@ -80,12 +87,8 @@ public class EurderController {
             UUID id) {
         security.validateAuthorization(id, Permission.VIEW_MY_ORDERS);
         logger.info("Fetching all your orders with items shipping today.");
-        List<Eurder> eurders = service.getEurdersWithItemsShippedToday(id);
-        ShippingTodayMapper shippedTodayMapper = new ShippingTodayMapper(new ItemGroupMapper(), new AddressMapper());
-        List<ItemGroup> itemsShippedToday = eurders.stream()
-                                                   .flatMap(eurder -> eurder.getItems().stream())
-                                                   .toList();
-        return shippedTodayMapper.toDto(itemsShippedToday, eurders.getFirst().getUser().getAddress());
+        ShippedToday shippedToday = service.getItemsShippedToday(id);
+        return shippingTodayMapper.toDto(shippedToday.items(), shippedToday.address());
     }
 
     @SecurityRequirement(name = "Authorization")
