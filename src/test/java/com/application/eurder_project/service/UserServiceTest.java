@@ -24,8 +24,47 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        admin = ServiceTestData.validAdmin();
-        List<User> users = ServiceTestData.validUserList();
+        admin = new User("Tom",
+                              "Mayo",
+                              "tom@sfth.uk",
+                              "0123456788",
+                              new Address("Shropshire Road",
+                                          8,
+                                          "3b",
+                                          "2034",
+                                          "United Kingdom"),
+                              Role.ADMIN);
+        List<User> users = List.of(new User("Alexander",
+                                            "Jeremy",
+                                            "aj@sfth.uk",
+                                            "0123456789",
+                                            new Address("Shropshire Road",
+                                                        8,
+                                                        "1a",
+                                                        "2034",
+                                                        "United Kingdom"),
+                                            Role.CUSTOMER),
+                                   new User("Luke",
+                                            "Manning",
+                                            "luke@sfth.uk",
+                                            "0123456784",
+                                            new Address("Shropshire Road",
+                                                        8,
+                                                        "1a",
+                                                        "2034",
+                                                        "United Kingdom"),
+                                            Role.CUSTOMER),
+                                   new User("Sam",
+                                            "Russel",
+                                            "sam@sfth.uk",
+                                            "0123456786",
+                                            new Address("Shropshire Road",
+                                                        8,
+                                                        "4a",
+                                                        "2034",
+                                                        "United Kingdom"),
+                                            Role.CUSTOMER)
+                                  );
         repository.save(admin);
         users.forEach(repository::save);
     }

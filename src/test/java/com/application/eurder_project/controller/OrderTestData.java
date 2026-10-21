@@ -2,14 +2,14 @@ package com.application.eurder_project.controller;
 
 import com.application.eurder_project.domain.Item;
 import com.application.eurder_project.service.request.PostItemGroupRequest;
-import com.application.eurder_project.service.request.PostEurderRequest;
+import com.application.eurder_project.service.request.PostOrderRequest;
 
 import java.util.List;
 import java.util.UUID;
 
-class EurderTestData {
+class OrderTestData {
 
-    private EurderTestData() {
+    private OrderTestData() {
     }
 
     public static Item cup() {
@@ -20,7 +20,7 @@ class EurderTestData {
         return new Item("Spoon", "Object to scoop liquid", 3.99, 10);
     }
 
-    public static PostEurderRequest validRequest(UUID itemId, int amount) {
-        return new PostEurderRequest(List.of(new PostItemGroupRequest(itemId, amount)));
+    public static PostOrderRequest validRequest(UUID itemId, int amount) {
+        return new PostOrderRequest(List.of(new PostItemGroupRequest(itemId, amount)));
     }
 }

@@ -25,8 +25,10 @@ class ItemServiceTest {
 
     @BeforeEach
     void setUp() {
-        Item firstItem = ServiceTestData.validItem();
-        List<Item> items = ServiceTestData.validItemList();
+        Item firstItem = new Item("Cup", "Object to pour liquids", 10.99, 5);
+        List<Item> items = List.of(new Item("Fork", "Object to stab solids", 5.99, 10),
+                                   new Item("Knife", "Object to cut solids", 5.99, 5),
+                                   new Item("Spoon", "Object to scoop liquids", 3.99, 10));
         firstItemId = firstItem.getId();
         repository.save(firstItem);
         items.forEach(repository::save);

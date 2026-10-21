@@ -1,29 +1,22 @@
 package com.application.eurder_project.service.validator;
 
-import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.service.exception.RequestException;
-import com.application.eurder_project.service.request.PostEurderRequest;
+import com.application.eurder_project.service.request.PostOrderRequest;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
-public class PostEurderValidator extends Validator {
+public class PostOrderValidator extends Validator {
 
     private final PostUserValidator userValidator;
     private final PostItemValidator itemValidator;
 
-    public PostEurderValidator(PostUserValidator userValidator, PostItemValidator itemValidator) {
+    public PostOrderValidator(PostUserValidator userValidator, PostItemValidator itemValidator) {
         this.userValidator = userValidator;
         this.itemValidator = itemValidator;
     }
 
-    public void isValidRequest(PostEurderRequest request) {
+    public void isValidRequest(PostOrderRequest request) {
         if (request == null) throw RequestException.notFilledInField("order");
         itemValidator.validItemGroups(request.items());
-    }
-
-    public User isValidUser(UUID id){
-        return userValidator.existingUser(id);
     }
 }
