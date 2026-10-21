@@ -13,7 +13,8 @@ public enum Role {
                   Permission.VIEW_ALL_ORDERS,
                   Permission.VIEW_ORDERS_BY_USER,
                   Permission.CREATE_ORDER)),
-    CUSTOMER(List.of(Permission.CREATE_ORDER));
+    CUSTOMER(List.of(Permission.CREATE_ORDER,
+                     Permission.VIEW_MY_REPORT));
 
     final List<Permission> permissions;
 

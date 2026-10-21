@@ -36,7 +36,9 @@ public class EurderController {
 
     @SecurityRequirement(name = "Authorization")
     @GetMapping
-    public List<EurderDto> getAllEurder(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) UUID id) {
+    public List<EurderDto> getAllEurder(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
+            UUID id) {
         security.validateAuthorization(id, Permission.VIEW_ALL_ORDERS);
         logger.info("Fetching all orders.");
         return mapper.toDtos(service.getAllEurders());
@@ -45,23 +47,25 @@ public class EurderController {
 
     @SecurityRequirement(name = "Authorization")
     @GetMapping("user/{id}")
-    public List<EurderDto> getEurdersByUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) UUID id, @PathVariable("id") UUID userId) {
+    public List<EurderDto> getEurdersByUser(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
+            UUID id, @PathVariable("id") UUID userId) {
         security.validateAuthorization(id, Permission.VIEW_ORDERS_BY_USER);
-        logger.info("Fetching all orders.");
+        logger.info("Fetching all orders related to searched user.");
         return mapper.toDtos(service.getEurdersByUser(userId));
     }
 
-    @SecurityRequirement(name="Authorization")
+    @SecurityRequirement(name = "Authorization")
     @Operation(summary = "Create an order")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Order created"),
-            @ApiResponse(responseCode = "401", description = "Missing or invalid Authorization header"),
-            @ApiResponse(responseCode = "403", description = "Not allowed to create users")
-    })
+    @ApiResponses({@ApiResponse(responseCode = "201", description = "Order created"),
+                   @ApiResponse(responseCode = "401",
+                                description = "Missing or invalid Authorization header"),
+                   @ApiResponse(responseCode = "403", description = "Not allowed to create users")})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EurderDto createEurder(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) UUID id,
-                                  @RequestBody PostEurderRequest request) {
+    public EurderDto createEurder(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
+            UUID id, @RequestBody PostEurderRequest request) {
         security.validateAuthorization(id, Permission.CREATE_ORDER);
         logger.info("Creating a new order.");
         return mapper.toDto(service.createEurder(id, request));

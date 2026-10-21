@@ -34,8 +34,8 @@ class ItemServiceTest {
 
     @Test
     @DisplayName("GetAll")
-    void WhenAListOfFourItemsWasPreSaved_WhenFetchingAllItems_ThenReturnsAListOfFour() {
-        assertEquals(4, service.getAllItems().size());
+    void WhenAListOfFiveItemsWasPreSaved_WhenFetchingAllItems_ThenReturnsAListOfFive() {
+        assertEquals(5, service.getAllItems().size());
     }
 
     @Test
