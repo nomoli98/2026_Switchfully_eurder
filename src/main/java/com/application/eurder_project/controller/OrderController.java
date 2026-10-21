@@ -42,6 +42,15 @@ public class OrderController {
         return mapper.toDtos(service.getAllOrders());
     }
 
+
+    @SecurityRequirement(name = "Authorization")
+    @GetMapping("user/{id}")
+    public List<OrderDto> getOrdersByUser(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) UUID id, @PathVariable("id") UUID userId) {
+        security.validateAuthorization(id, Permission.VIEW_ORDERS_BY_USER);
+        logger.info("Fetching all orders.");
+        return mapper.toDtos(service.getOrdersByUser(userId));
+    }
+
     @SecurityRequirement(name="Authorization")
     @Operation(summary = "Create an order")
     @ApiResponses({
