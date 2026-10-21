@@ -9,6 +9,7 @@ public enum Permission {
     CREATE_ORDER,
     VIEW_USER_BY_ID,
     UPDATE_ITEM,
-    VIEW_MY_REPORT
+    VIEW_MY_REPORT,
+    VIEW_MY_ORDERS,
 
 }

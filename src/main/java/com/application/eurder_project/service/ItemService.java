@@ -21,7 +21,8 @@ public class ItemService {
     private final PutItemValidator putValidator;
     private static final Logger logger = LoggerFactory.getLogger(ItemService.class);
 
-    public ItemService(ItemRepository repository, PostItemValidator validator,
+    public ItemService(ItemRepository repository,
+                       PostItemValidator validator,
                        PutItemValidator putValidator) {
         this.repository = repository;
         this.postValidator = validator;
@@ -32,8 +33,7 @@ public class ItemService {
 
     public Item getItemById(UUID id) {
         return repository.get(id)
-                         .orElseThrow(() -> ExistenceException.NotInDatabase(
-                                 Item.class.getTypeName()));
+                         .orElseThrow(() -> ExistenceException.NotInDatabase(Item.class.getTypeName()));
     }
 
     public Item createItem(PostItemRequest request) {
@@ -50,9 +50,11 @@ public class ItemService {
         logger.info("Verifying put inputs");
         putValidator.isValidRequest(itemId, request);
         logger.info("Put input validated.");
-        return repository.updateItem(itemId, getItemById(itemId), new Item(request.getName(),
-                                                                           request.getDescription(),
-                                                                           request.getPrice(),
-                                                                           request.getStock()));
+        return repository.updateItem(itemId,
+                                     getItemById(itemId),
+                                     new Item(request.getName(),
+                                              request.getDescription(),
+                                              request.getPrice(),
+                                              request.getStock()));
     }
 }

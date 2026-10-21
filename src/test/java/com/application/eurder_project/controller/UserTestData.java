@@ -21,7 +21,7 @@ class UserTestData {
                                    "0471234567",
                                    "Main Street",
                                    12,
-                                   "2B",
+                                   "London",
                                    "1000",
                                    "Belgium",
                                    Role.CUSTOMER);
@@ -35,7 +35,7 @@ class UserTestData {
                         new Address(
                                 "Main Street",
                                 12,
-                                "2B",
+                                "London",
                                 "1000",
                                 "Belgium"),
                         Role.ADMIN);
@@ -46,7 +46,7 @@ class UserTestData {
                         "Doe",
                         "customer@example.com",
                         "0471234567",
-                        new Address("Main Street", 12, "2B", "1000", "Belgium"),
+                        new Address("Main Street", 12, "London", "1000", "Belgium"),
                         Role.CUSTOMER);
     }
 

@@ -1,11 +1,20 @@
 package com.application.eurder_project.controller;
 
 import com.application.eurder_project.controller.dto.EurderDto;
+import com.application.eurder_project.controller.dto.ShippedTodayDto;
+import com.application.eurder_project.controller.mapper.AddressMapper;
 import com.application.eurder_project.controller.mapper.EurderMapper;
+import com.application.eurder_project.controller.mapper.ItemGroupMapper;
+import com.application.eurder_project.controller.mapper.ShippingTodayMapper;
+import com.application.eurder_project.domain.Eurder;
+import com.application.eurder_project.domain.ItemGroup;
+import com.application.eurder_project.repository.UserRepository;
 import com.application.eurder_project.security.Permission;
 import com.application.eurder_project.security.SecurityService;
 import com.application.eurder_project.service.EurderService;
+import com.application.eurder_project.service.UserService;
 import com.application.eurder_project.service.request.PostEurderRequest;
+import com.application.eurder_project.service.validator.PostUserValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,7 +53,6 @@ public class EurderController {
         return mapper.toDtos(service.getAllEurders());
     }
 
-
     @SecurityRequirement(name = "Authorization")
     @GetMapping("user/{id}")
     public List<EurderDto> getEurdersByUser(
@@ -53,6 +61,31 @@ public class EurderController {
         security.validateAuthorization(id, Permission.VIEW_ORDERS_BY_USER);
         logger.info("Fetching all orders related to searched user.");
         return mapper.toDtos(service.getEurdersByUser(userId));
+    }
+
+    @SecurityRequirement(name = "Authorization")
+    @GetMapping("my-orders")
+    public List<EurderDto> getAllUserEurder(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
+            UUID id) {
+        security.validateAuthorization(id, Permission.VIEW_MY_ORDERS);
+        logger.info("Fetching all your orders.");
+        return mapper.toDtos(service.getEurdersByUser(id));
+    }
+
+    @SecurityRequirement(name = "Authorization")
+    @GetMapping("my-orders/today")
+    public ShippedTodayDto getEudersShippingToday(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
+            UUID id) {
+        security.validateAuthorization(id, Permission.VIEW_MY_ORDERS);
+        logger.info("Fetching all your orders with items shipping today.");
+        List<Eurder> eurders = service.getEurdersWithItemsShippedToday(id);
+        ShippingTodayMapper shippedTodayMapper = new ShippingTodayMapper(new ItemGroupMapper(), new AddressMapper());
+        List<ItemGroup> itemsShippedToday = eurders.stream()
+                                                   .flatMap(eurder -> eurder.getItems().stream())
+                                                   .toList();
+        return shippedTodayMapper.toDto(itemsShippedToday, eurders.getFirst().getUser().getAddress());
     }
 
     @SecurityRequirement(name = "Authorization")

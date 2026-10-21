@@ -80,7 +80,7 @@ class ItemControllerTest {
 
     @Test
     @DisplayName("GetAll -> EmptyList")
-    void getAllItems_whenNoCustomersExist_returnsEmptyList() {
+    void getAllItems_whenNoItemsExist_returnsEmptyList() {
         given().when()
                .get(ITEMS)
                .then()
@@ -90,8 +90,8 @@ class ItemControllerTest {
     }
 
     @Test
-    @DisplayName("CreateCustomer -> 201 and Customer")
-    void createCustomer_withValidRequest_returns201AndTheCreatedCustomer() {
+    @DisplayName("CreatItem -> 201 and Item")
+    void createItems_withValidRequest_returns201AndTheCreatedItem() {
         given().header(AUTHORIZATION, adminId)
                .contentType(ContentType.JSON)
                .body(validPostRequest())

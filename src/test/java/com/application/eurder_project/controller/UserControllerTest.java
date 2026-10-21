@@ -86,7 +86,7 @@ class UserControllerTest {
                .body("phoneNumber", equalTo("0471234567"))
                .body("address.street", equalTo("Main Street"))
                .body("address.number", equalTo(12))
-               .body("address.apartment", equalTo("2B"))
+               .body("address.city", equalTo("London"))
                .body("address.postalCode", equalTo("1000"))
                .body("address.country", equalTo("Belgium"));
     }

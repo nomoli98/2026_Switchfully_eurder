@@ -43,11 +43,18 @@ public class EurderService {
                                .orElseThrow(() -> ExistenceException.NotInDatabase(Eurder.class.getTypeName()));
     }
 
+    public List<Eurder> getEurdersWithItemsShippedToday(UUID userId) {
+        logger.info("Verifying user.");
+        User user = userRepository.get(userId)
+                                  .orElseThrow(() -> ExistenceException.NotInDatabase(User.class.getTypeName()));
+        logger.info("User validated.");
+        return eurderRepository.getMyEurdersWithItemsShippedToday(userId);
+    }
+
     public List<Eurder> getEurdersByUser(UUID userId) {
         logger.info("Verifying user.");
         User user = userRepository.get(userId)
-                                  .orElseThrow(() -> ExistenceException.NotInDatabase(
-                                          User.class.getTypeName()));
+                                  .orElseThrow(() -> ExistenceException.NotInDatabase(User.class.getTypeName()));
         logger.info("User validated.");
         return eurderRepository.getByUser(user);
     }
@@ -69,4 +76,5 @@ public class EurderService {
         groups.forEach(g -> g.getItem().setStock(g.getItem().getStock() - g.getAmount()));
         return eurderRepository.save(new Eurder(groups, user));
     }
+
 }
