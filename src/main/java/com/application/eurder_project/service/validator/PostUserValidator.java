@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Component
@@ -59,7 +60,7 @@ public class PostUserValidator extends Validator {
         if (!isValidRole(request.role())) throw RequestException.invalidField("user role");
     }
 
-    public void existingUser(User user) {
-        userRepository.get(user.getId()).orElseThrow(() -> ExistenceException.NotInDatabase("user"));
+    public User existingUser(UUID id) {
+        return userRepository.get(id).orElseThrow(() -> ExistenceException.NotInDatabase("user"));
     }
 }

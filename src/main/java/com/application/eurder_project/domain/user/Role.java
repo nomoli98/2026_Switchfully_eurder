@@ -10,9 +10,10 @@ public enum Role {
                   Permission.CREATE_USER,
                   Permission.CREATE_ITEM,
                   Permission.UPDATE_ITEM,
-                  Permission.VIEW_ALL_ORDERS,
-                  Permission.CREATE_ORDER)),
-    CUSTOMER(List.of(Permission.CREATE_ORDER));
+                  Permission.VIEW_ALL_EURDERS,
+                  Permission.VIEW_ALL_EURDERS_OF_ONE_USER,
+                  Permission.CREATE_EURDER)),
+    CUSTOMER(List.of(Permission.CREATE_EURDER));
 
     final List<Permission> permissions;
 
