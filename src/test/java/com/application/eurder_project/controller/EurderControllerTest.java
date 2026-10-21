@@ -155,9 +155,9 @@ class EurderControllerTest {
     @Test
     @DisplayName("CreateEurder with several item groups -> total is the sum of the groups")
     void createEurder_withMultipleItemGroups_returnsSummedTotalPrice() {
-        PostEurderRequest request = new PostEurderRequest(List.of(
-                new PostItemGroupRequest(cup.getId(), 2),
-                new PostItemGroupRequest(spoon.getId(), 3)));
+        PostEurderRequest request
+                = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 2),
+                                                new PostItemGroupRequest(spoon.getId(), 3)));
 
         given().header(AUTHORIZATION, customerId)
                .contentType(ContentType.JSON)
@@ -231,29 +231,32 @@ class EurderControllerTest {
     }
 
     static Stream<Arguments> invalidRequests() {
-        return Stream.of(
-                arguments("amount equals zero",
-                          (Function<UUID, PostEurderRequest>) itemId -> validRequest(itemId, 0)),
-                arguments("amount is negative",
-                          (Function<UUID, PostEurderRequest>) itemId -> validRequest(itemId, -3)),
-                arguments("items list is empty",
-                          (Function<UUID, PostEurderRequest>) itemId -> new PostEurderRequest(List.of())),
-                arguments("items list is null",
-                          (Function<UUID, PostEurderRequest>) itemId -> new PostEurderRequest(null)),
-                arguments("item id is null",
-                          (Function<UUID, PostEurderRequest>) itemId -> new PostEurderRequest(
-                                  List.of(new PostItemGroupRequest(null, 1)))),
-                arguments("one item group is null",
-                          (Function<UUID, PostEurderRequest>) itemId -> new PostEurderRequest(
-                                  Arrays.asList(new PostItemGroupRequest(itemId, 1), null)))
-        );
+        return Stream.of(arguments("amount equals zero",
+                                   (Function<UUID, PostEurderRequest>) itemId -> validRequest(itemId,
+                                                                                              0)),
+                         arguments("amount is negative",
+                                   (Function<UUID, PostEurderRequest>) itemId -> validRequest(itemId,
+                                                                                              -3)),
+                         arguments("items list is empty",
+                                   (Function<UUID, PostEurderRequest>) itemId -> new PostEurderRequest(
+                                           List.of())),
+                         arguments("items list is null",
+                                   (Function<UUID, PostEurderRequest>) itemId -> new PostEurderRequest(
+                                           null)),
+                         arguments("item id is null",
+                                   (Function<UUID, PostEurderRequest>) itemId -> new PostEurderRequest(
+                                           List.of(new PostItemGroupRequest(null, 1)))),
+                         arguments("one item group is null",
+                                   (Function<UUID, PostEurderRequest>) itemId -> new PostEurderRequest(
+                                           Arrays.asList(new PostItemGroupRequest(itemId, 1),
+                                                         null))));
     }
 
     @ParameterizedTest(name = "{0} -> 400")
     @MethodSource("invalidRequests")
     @DisplayName("Invalid Request fields -> 400")
     void createEurder_withInvalidRequest_returns400(String description,
-                                                   Function<UUID, PostEurderRequest> requestForItem) {
+                                                    Function<UUID, PostEurderRequest> requestForItem) {
         given().header(AUTHORIZATION, customerId)
                .contentType(ContentType.JSON)
                .body(requestForItem.apply(cup.getId()))
@@ -278,9 +281,9 @@ class EurderControllerTest {
     @Test
     @DisplayName("Invalid Eurder -> stock is untouched")
     void createEurder_withInvalidRequest_doesNotChangeStock() {
-        PostEurderRequest request = new PostEurderRequest(List.of(
-                new PostItemGroupRequest(cup.getId(), 2),
-                new PostItemGroupRequest(UUID.randomUUID(), 1)));
+        PostEurderRequest request
+                = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 2),
+                                                new PostItemGroupRequest(UUID.randomUUID(), 1)));
 
         given().header(AUTHORIZATION, customerId)
                .contentType(ContentType.JSON)
@@ -292,8 +295,6 @@ class EurderControllerTest {
 
         org.junit.jupiter.api.Assertions.assertEquals(5, currentStock(cup));
     }
-
-    // ---------- Security ----------
 
     @Test
     @DisplayName("CreateEurder without Authorization header -> 401")
@@ -327,10 +328,6 @@ class EurderControllerTest {
     @Test
     @DisplayName("GetAll as customer -> 403")
     void getAllEurders_asCustomer_returns403() {
-        given().header(AUTHORIZATION, customerId)
-               .when()
-               .get(EURDERS)
-               .then()
-               .statusCode(403);
+        given().header(AUTHORIZATION, customerId).when().get(EURDERS).then().statusCode(403);
     }
 }
