@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("reports")
+@RequestMapping("report")
 public class ReportController {
     private final ReportService service;
     private final ReportMapper mapper;
