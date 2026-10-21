@@ -6,17 +6,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Order {
+public class Eurder {
     private final UUID id;
     private double totalPrice;
     private List<ItemGroup> items;
     private final User user;
 
-    public Order(List<ItemGroup> items, User user) {
+    public Eurder(List<ItemGroup> items, User user) {
         this.id = UUID.randomUUID();
-        for (ItemGroup i : items) {
-            this.totalPrice += i.getGroupPrice();
-        }
+        this.totalPrice = items.stream()
+                                .mapToDouble(ItemGroup::getGroupPrice)
+                                .sum();
         this.items = items;
         this.user = user;
     }
@@ -40,9 +40,9 @@ public class Order {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
-        return Double.compare(totalPrice, order.totalPrice) == 0 && Objects.equals(items, order.items) &&
-               Objects.equals(user, order.user);
+        Eurder eurder = (Eurder) o;
+        return Double.compare(totalPrice, eurder.totalPrice) == 0 && Objects.equals(items, eurder.items) &&
+               Objects.equals(user, eurder.user);
     }
 
     @Override
