@@ -1,6 +1,7 @@
 package com.application.eurder_project.service;
 
 import com.application.eurder_project.domain.Eurder;
+import com.application.eurder_project.domain.Item;
 import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.EurderRepository;
 import com.application.eurder_project.repository.ItemRepository;
@@ -72,27 +73,33 @@ class EurderServiceTest {
     }
 
     @Test
-    @DisplayName("can reeurder a eurder -> return the new eurder")
-    void givenAValidUserIdAndAValidEurderId_WhenReEurdering_ReturnsNEwEurder(){
+    @DisplayName("with valid user & valid eurder -> when reeurder -> returns new eurder")
+    void givenAValidUserIdAndAValidEurderId_WhenReEurdering_ReturnsNewEurder(){
         eurderRepository.save(eurder);
         assertEquals(admin.getId(), service.reeurderAnExistingEurder(admin.getId(), eurder.getId()).getUser().getId());
     }
 
     @Test
-    @DisplayName("can reeurder a eurder -> return the new eurder")
-    void givenAnInvalidUserIdAndAValidEurderId_WhenReEurdering_Throws(){
+    @DisplayName("with invalid user & valid eurder -> when reeurder -> throws exception")
+    void givenAnInvalidUserIdAndAValidEurderId_WhenReEurdering_ThrowsExistenceException(){
         eurderRepository.save(eurder);
         assertThrows(ExistenceException.class, () -> service.reeurderAnExistingEurder(UUID.randomUUID(), eurder.getId()));
     }
 
     @Test
-    @DisplayName("can reeurder a eurder -> return the new eurder")
-    void givenAValidUserIdAndAnInvalidEurderId_WhenReEurdering_Throws(){
+    @DisplayName("with valid user & invalid eurder -> when reeurder -> throws exception")
+    void givenAValidUserIdAndAnInvalidEurderId_WhenReEurdering_ThrowsExistenceException(){
         eurderRepository.save(eurder);
         assertThrows(ExistenceException.class, () -> service.reeurderAnExistingEurder(admin.getId(), UUID.randomUUID()));
     }
 
-
-
+    @Test
+    @DisplayName("with valid user & valid eurder -> if item price changer -> when reeurder -> returns different total price")
+    void givenAValidUserIdAndAValidEurderId_WhenReEurderingAndChangingThePriceOfAnItem_ReturnsNewEurderWithDifferentPrice(){
+        eurderRepository.save(eurder);
+        Item item = eurder.getItems().get(0).getItem();
+        itemRepository.updateItem(item.getId(), item, new Item(item.getName(), item.getDescription(), 0.99, item.getStock()));
+        assertNotEquals(eurder.getTotalPrice(), service.reeurderAnExistingEurder(admin.getId(), eurder.getId()).getTotalPrice());
+    }
 
 }

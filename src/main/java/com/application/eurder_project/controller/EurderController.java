@@ -62,7 +62,7 @@ public class EurderController {
     }
 
     @SecurityRequirement(name = "Authorization")
-    @GetMapping("my-orders")
+    @GetMapping("my-eurders")
     public List<EurderDto> getAllUserEurder(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
             UUID id) {
@@ -72,7 +72,7 @@ public class EurderController {
     }
 
     @SecurityRequirement(name = "Authorization")
-    @GetMapping("my-orders/today")
+    @GetMapping("my-eurders/today")
     public ShippedTodayDto getEudersShippingToday(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
             UUID id) {
@@ -96,5 +96,17 @@ public class EurderController {
         security.validateAuthorization(id, Permission.CREATE_ORDER);
         logger.info("Creating a new order.");
         return mapper.toDto(service.createEurder(id, request));
+    }
+
+    @SecurityRequirement(name = "Authorization")
+    @PostMapping("my-eurders/re-eurder/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public EurderDto reEurderAPreviousEurder(
+            @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
+            UUID id,
+            @PathVariable("id") UUID eurderId) {
+        security.validateAuthorization(id, Permission.CREATE_ORDER);
+        logger.info("Reordering your previous order.");
+        return mapper.toDto(service.reeurderAnExistingEurder(id, eurderId));
     }
 }

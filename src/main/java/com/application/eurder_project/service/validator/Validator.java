@@ -25,17 +25,21 @@ public abstract class Validator {
         return role == null;
     }
 
-    public boolean isNegative(Double numberToVerify){
-        if(numberToVerify == null) return false;
+    public boolean isNegative(Double numberToVerify) {
+        if (numberToVerify == null) return false;
         return numberToVerify <= 0;
     }
 
-    public boolean isNegative(Integer numberToVerify){
-        if(numberToVerify == null) return false;
+    public boolean isNegative(Integer numberToVerify) {
+        if (numberToVerify == null) return false;
         return numberToVerify <= 0;
     }
 
-    public Eurder isInEurderList(List<Eurder> eurderList, UUID uuid){
-        return eurderList.stream().filter(e -> e.getId() == uuid).findAny().orElseThrow(() -> ExistenceException.NotInDatabase("This eurder is not in the database"));
+    public Eurder isInEurderList(List<Eurder> eurderList, UUID uuid) {
+        return eurderList.stream()
+                         .filter(e -> e.getId().equals(uuid))
+                         .findAny()
+                         .orElseThrow(() -> ExistenceException.NotInDatabase(
+                                 "This eurder is not in the database"));
     }
 }

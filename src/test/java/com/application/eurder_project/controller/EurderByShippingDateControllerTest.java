@@ -37,7 +37,7 @@ import static org.hamcrest.Matchers.notNullValue;
 class EurderByShippingDateControllerTest {
 
     private static final String EURDERS = "/eurders";
-    private static final String SHIPPING_TODAY = EURDERS + "/my-orders/today";
+    private static final String SHIPPING_TODAY = EURDERS + "/my-eurders/today";
     private static final String AUTHORIZATION = "Authorization";
 
     private User admin;
