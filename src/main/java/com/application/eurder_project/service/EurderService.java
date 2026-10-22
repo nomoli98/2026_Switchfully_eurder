@@ -8,7 +8,9 @@ import com.application.eurder_project.repository.EurderRepository;
 import com.application.eurder_project.repository.UserRepository;
 import com.application.eurder_project.security.UnauthorizedException;
 import com.application.eurder_project.service.exception.ExistenceException;
+import com.application.eurder_project.service.mapper.ReorderMapper;
 import com.application.eurder_project.service.request.PostEurderRequest;
+import com.application.eurder_project.service.request.PostItemGroupRequest;
 import com.application.eurder_project.service.response.ShippedToday;
 import com.application.eurder_project.service.validator.PostEurderValidator;
 import org.slf4j.Logger;
@@ -45,7 +47,7 @@ public class EurderService {
                                .orElseThrow(() -> ExistenceException.NotInDatabase(Eurder.class.getTypeName()));
     }
 
-    public ShippedToday getItemsShippedToday(UUID userId) {
+    public ShippedToday getOneUserItemsShippedToday(UUID userId) {
         logger.info("Verifying user.");
         User user = userRepository.get(userId)
                                   .orElseThrow(() -> ExistenceException.NotInDatabase(User.class.getTypeName()));
@@ -84,6 +86,13 @@ public class EurderService {
 
         groups.forEach(g -> g.getItem().setStock(g.getItem().getStock() - g.getAmount()));
         return eurderRepository.save(new Eurder(groups, user));
+    }
+
+    public Eurder reeurderAnExistingEurder(UUID userId,UUID eurderId){
+        List<Eurder> userEurders = getEurdersByUser(userId);
+        Eurder eurderToReeurder = validator.isInEurderList(userEurders, eurderId);
+        PostEurderRequest newRequest = ReorderMapper.toEurderRequest(eurderToReeurder);
+        return createEurder(userId, newRequest);
     }
 
 }

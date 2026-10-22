@@ -5,6 +5,7 @@ import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.EurderRepository;
 import com.application.eurder_project.repository.ItemRepository;
 import com.application.eurder_project.repository.UserRepository;
+import com.application.eurder_project.service.exception.ExistenceException;
 import com.application.eurder_project.service.validator.PostEurderValidator;
 import com.application.eurder_project.service.validator.PostItemValidator;
 import com.application.eurder_project.service.validator.PostUserValidator;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,11 +31,14 @@ class EurderServiceTest {
                                                             userRepository,
                                                             validator);
     private User admin;
+    private Eurder eurder;
 
     @BeforeEach
     void setUp() {
         admin = ServiceTestData.validAdmin();
         userRepository.save(admin);
+        eurder = ServiceTestData.validEurder(admin);
+        eurder.getItems().forEach(group -> itemRepository.save(group.getItem()));
     }
 
     @Test
@@ -53,7 +58,6 @@ class EurderServiceTest {
     @Test
     @DisplayName("getOne with valid id -> return eurder")
     void givenAValidId_WhenGetByID_ReturnsEurder(){
-        Eurder eurder = ServiceTestData.validEurder(admin);
         eurderRepository.save(eurder);
         assertEquals(eurder.getUser(), service.getOneEurderById(eurder.getId()).getUser());
     }
@@ -66,6 +70,28 @@ class EurderServiceTest {
         eurders.forEach(eurderRepository::save);
         assertEquals(4, service.getEurdersByUser(admin.getId()).size());
     }
+
+    @Test
+    @DisplayName("can reeurder a eurder -> return the new eurder")
+    void givenAValidUserIdAndAValidEurderId_WhenReEurdering_ReturnsNEwEurder(){
+        eurderRepository.save(eurder);
+        assertEquals(admin.getId(), service.reeurderAnExistingEurder(admin.getId(), eurder.getId()).getUser().getId());
+    }
+
+    @Test
+    @DisplayName("can reeurder a eurder -> return the new eurder")
+    void givenAnInvalidUserIdAndAValidEurderId_WhenReEurdering_Throws(){
+        eurderRepository.save(eurder);
+        assertThrows(ExistenceException.class, () -> service.reeurderAnExistingEurder(UUID.randomUUID(), eurder.getId()));
+    }
+
+    @Test
+    @DisplayName("can reeurder a eurder -> return the new eurder")
+    void givenAValidUserIdAndAnInvalidEurderId_WhenReEurdering_Throws(){
+        eurderRepository.save(eurder);
+        assertThrows(ExistenceException.class, () -> service.reeurderAnExistingEurder(admin.getId(), UUID.randomUUID()));
+    }
+
 
 
 
