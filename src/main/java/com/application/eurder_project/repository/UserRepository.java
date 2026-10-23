@@ -12,10 +12,6 @@ public class UserRepository extends FakeDatabase<User> {
 
     public UserRepository() {}
 
-    public UserRepository(List<User> users) {
-        users.forEach(this::save);
-    }
-
     public User save(User user) {
         return saveWithId(user.getId(), user);
     }

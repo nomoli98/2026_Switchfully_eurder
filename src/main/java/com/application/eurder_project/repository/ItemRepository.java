@@ -20,10 +20,10 @@ public class ItemRepository extends FakeDatabase<Item> {
         return saveWithId(item.getId(), item);
     }
 
-    public Item updateItem(UUID itemId, Item oldItem, Item updatedItem) {
-        if (!update(itemId, oldItem, updatedItem)) {
+    public Item updateItem(UUID id, Item item, Item updatedItem) {
+        if (!update(id, item, updatedItem)) {
             throw new ConcurrentModificationException(
-                    "Item " + itemId + " was modified or removed by another request");
+                    "Item " + id + " was modified or removed by another request");
         }
         return updatedItem;
     }
