@@ -2,18 +2,21 @@ package com.application.eurder_project.service;
 
 import com.application.eurder_project.domain.Eurder;
 import com.application.eurder_project.domain.Item;
+import com.application.eurder_project.domain.ItemGroup;
 import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.EurderRepository;
 import com.application.eurder_project.repository.ItemRepository;
 import com.application.eurder_project.repository.UserRepository;
+import com.application.eurder_project.security.UnauthorizedException;
 import com.application.eurder_project.service.exception.ExistenceException;
-import com.application.eurder_project.service.validator.PostEurderValidator;
-import com.application.eurder_project.service.validator.PostItemValidator;
-import com.application.eurder_project.service.validator.PostUserValidator;
+import com.application.eurder_project.service.request.PostEurderRequest;
+import com.application.eurder_project.service.request.PostItemGroupRequest;
+import com.application.eurder_project.service.response.ShippedToday;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,14 +26,9 @@ class EurderServiceTest {
     private final EurderRepository eurderRepository = new EurderRepository();
     private final ItemRepository itemRepository = new ItemRepository();
     private final UserRepository userRepository = new UserRepository();
-    private final PostUserValidator userValidator = new PostUserValidator(userRepository);
-    private final PostItemValidator itemValidator = new PostItemValidator(itemRepository);
-    private final PostEurderValidator validator = new PostEurderValidator(userValidator,
-                                                                          itemValidator);
     private final EurderService service = new EurderService(eurderRepository,
                                                             itemRepository,
-                                                            userRepository,
-                                                            validator);
+                                                            userRepository);
     private User admin;
     private Eurder eurder;
 
@@ -57,10 +55,10 @@ class EurderServiceTest {
     }
 
     @Test
-    @DisplayName("getOne with valid id -> return eurder")
-    void givenAValidId_WhenGetByID_ReturnsEurder(){
+    @DisplayName("save and get from the repository -> returns the same eurder")
+    void givenASavedEurder_WhenGettingItFromTheRepository_ReturnsEurder(){
         eurderRepository.save(eurder);
-        assertEquals(eurder.getUser(), service.getOneEurderById(eurder.getId()).getUser());
+        assertEquals(eurder, eurderRepository.get(eurder.getId()).orElseThrow());
     }
 
 
@@ -98,8 +96,96 @@ class EurderServiceTest {
     void givenAValidUserIdAndAValidEurderId_WhenReEurderingAndChangingThePriceOfAnItem_ReturnsNewEurderWithDifferentPrice(){
         eurderRepository.save(eurder);
         Item item = eurder.getItems().get(0).getItem();
-        itemRepository.updateItem(item.getId(), item, new Item(item.getName(), item.getDescription(), 0.99, item.getStock()));
+        item.setPrice(0.99);
         assertNotEquals(eurder.getTotalPrice(), service.reeurderAnExistingEurder(admin.getId(), eurder.getId()).getTotalPrice());
     }
 
+    @Test
+    @DisplayName("createEurder with the same item twice -> stock is used up group after group")
+    void givenTheSameItemTwice_WhenCreatingEurder_TheSecondGroupIsCheckedAgainstTheStockLeft(){
+        Item cup = ServiceTestData.validItem();
+        itemRepository.save(cup);
+        PostEurderRequest request = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 3),
+                                                                  new PostItemGroupRequest(cup.getId(), 3)));
+
+        Eurder created = service.createEurder(admin.getId(), request);
+
+        assertEquals(LocalDate.now().plusDays(1), created.getItems().get(0).getShippingDate());
+        assertEquals(LocalDate.now().plusDays(7), created.getItems().get(1).getShippingDate());
+        assertEquals(-1, cup.getStock());
+    }
+
+    @Test
+    @DisplayName("createEurder above the stock -> backorder, the stock goes negative")
+    void givenAnAmountAboveTheStock_WhenCreatingEurder_TheStockGoesNegative(){
+        Item cup = ServiceTestData.validItem();
+        itemRepository.save(cup);
+
+        service.createEurder(admin.getId(), new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 8))));
+
+        assertEquals(-3, cup.getStock());
+    }
+
+    @Test
+    @DisplayName("createEurder with an unknown item -> throws and stock is untouched")
+    void givenAnUnknownItem_WhenCreatingEurder_ThrowsAndLeavesTheStockAlone(){
+        Item cup = ServiceTestData.validItem();
+        itemRepository.save(cup);
+        PostEurderRequest request = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 2),
+                                                                  new PostItemGroupRequest(UUID.randomUUID(), 1)));
+
+        assertThrows(ExistenceException.class, () -> service.createEurder(admin.getId(), request));
+        assertEquals(5, cup.getStock());
+    }
+
+    @Test
+    @DisplayName("createEurder with an unknown user -> throws unauthorized")
+    void givenAnUnknownUser_WhenCreatingEurder_ThrowsUnauthorized(){
+        Item cup = ServiceTestData.validItem();
+        itemRepository.save(cup);
+        PostEurderRequest request = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 1)));
+
+        assertThrows(UnauthorizedException.class, () -> service.createEurder(UUID.randomUUID(), request));
+    }
+
+    @Test
+    @DisplayName("createEurder -> name and unit price are a snapshot of the item")
+    void givenAnItemThatChangesAfterTheEurder_TheItemGroupKeepsTheOldNameAndPrice(){
+        Item cup = ServiceTestData.validItem();
+        itemRepository.save(cup);
+        Eurder created = service.createEurder(admin.getId(),
+                                              new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 2))));
+
+        cup.setName("Glass");
+        cup.setPrice(1.0);
+
+        ItemGroup group = created.getItems().get(0);
+        assertEquals("Cup", group.getItemName());
+        assertEquals(10.99, group.getUnitPrice());
+        assertEquals(2 * 10.99, group.getGroupPrice(), 0.001);
+        assertEquals(2 * 10.99, created.getTotalPrice(), 0.001);
+    }
+
+    @Test
+    @DisplayName("items shipped today -> customer sees own groups, admin sees one entry per eurder")
+    void givenEurdersShippingToday_WhenFetchingThem_CustomerAndAdminViewsAreCorrect(){
+        LocalDate today = LocalDate.now();
+        User customer = ServiceTestData.validUserList().get(0);
+        userRepository.save(customer);
+        Item cup = ServiceTestData.validItem();
+        eurderRepository.save(new Eurder(List.of(new ItemGroup(cup, 1, today),
+                                                 new ItemGroup(cup, 1, today.plusDays(1))), customer));
+        eurderRepository.save(new Eurder(List.of(new ItemGroup(cup, 2, today.plusDays(1))), admin));
+
+        List<ShippedToday> all = service.getAllItemsShippedToday();
+        ShippedToday mine = service.getMyItemsShippedToday(customer.getId());
+
+        assertEquals(1, all.size());
+        assertEquals(1, all.get(0).items().size());
+        assertEquals(customer.getAddress(), all.get(0).address());
+        assertEquals(1, mine.items().size());
+        assertEquals(customer.getAddress(), mine.address());
+        assertEquals(0, service.getMyItemsShippedToday(admin.getId()).items().size());
+        assertThrows(ExistenceException.class, () -> service.getMyItemsShippedToday(UUID.randomUUID()));
+    }
 }

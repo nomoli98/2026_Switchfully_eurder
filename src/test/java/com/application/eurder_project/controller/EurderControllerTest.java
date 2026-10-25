@@ -2,11 +2,12 @@ package com.application.eurder_project.controller;
 
 import com.application.eurder_project.domain.Item;
 import com.application.eurder_project.domain.user.User;
-import com.application.eurder_project.repository.ItemRepository;
 import com.application.eurder_project.repository.EurderRepository;
+import com.application.eurder_project.repository.ItemRepository;
 import com.application.eurder_project.repository.UserRepository;
-import com.application.eurder_project.service.request.PostItemGroupRequest;
 import com.application.eurder_project.service.request.PostEurderRequest;
+import com.application.eurder_project.service.request.PostItemGroupRequest;
+import com.application.eurder_project.service.request.PutItemRequest;
 import io.restassured.RestAssured;
 import io.restassured.config.JsonConfig;
 import io.restassured.config.RestAssuredConfig;
@@ -329,5 +330,55 @@ class EurderControllerTest {
     @DisplayName("GetAll as customer -> 403")
     void getAllEurders_asCustomer_returns403() {
         given().header(AUTHORIZATION, customerId).when().get(EURDERS).then().statusCode(403);
+    }
+
+    @Test
+    @DisplayName("CreateEurder with the same item twice -> second group is checked against the stock left")
+    void createEurder_withTheSameItemTwice_usesUpTheStockGroupAfterGroup() {
+        PostEurderRequest request
+                = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 3),
+                                                new PostItemGroupRequest(cup.getId(), 3)));
+
+        given().header(AUTHORIZATION, customerId)
+               .contentType(ContentType.JSON)
+               .body(request)
+               .when()
+               .post(EURDERS)
+               .then()
+               .statusCode(201)
+               .body("items[0].shippingDate", equalTo(LocalDate.now().plusDays(1).toString()))
+               .body("items[1].shippingDate", equalTo(LocalDate.now().plusDays(7).toString()));
+
+        org.junit.jupiter.api.Assertions.assertEquals(-1, currentStock(cup));
+    }
+
+    @Test
+    @DisplayName("Item updated after the Eurder -> the Eurder keeps the old name and price")
+    void updatedItem_doesNotChangeExistingEurders() {
+        postEurder(customerId, validRequest(cup.getId(), 2));
+
+        given().header(AUTHORIZATION, adminId)
+               .contentType(ContentType.JSON)
+               .body(new PutItemRequest("Glass", null, 1.0, null))
+               .when()
+               .put("/items/" + cup.getId())
+               .then()
+               .statusCode(200);
+
+        given().header(AUTHORIZATION, customerId)
+               .when()
+               .get(EURDERS + "/my-eurders")
+               .then()
+               .statusCode(200)
+               .body("", hasSize(1))
+               .body("[0].totalPrice", closeTo(2 * 10.99, 0.001))
+               .body("[0].items[0].itemName", equalTo("Cup"))
+               .body("[0].items[0].groupPrice", closeTo(2 * 10.99, 0.001));
+    }
+
+    @Test
+    @DisplayName("GetAll with an Authorization header that is not an id -> 401")
+    void getAllEurders_withMalformedAuthorizationHeader_returns401() {
+        given().header(AUTHORIZATION, "not-a-uuid").when().get(EURDERS).then().statusCode(401);
     }
 }

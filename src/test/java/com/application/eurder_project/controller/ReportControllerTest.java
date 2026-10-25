@@ -1,6 +1,6 @@
 package com.application.eurder_project.controller;
+
 import com.application.eurder_project.domain.Item;
-import com.application.eurder_project.domain.Report;
 import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.EurderRepository;
 import com.application.eurder_project.repository.ItemRepository;
@@ -19,15 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-import java.time.LocalDate;
 import java.util.UUID;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
-
 
 import static com.application.eurder_project.controller.EurderTestData.*;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ReportControllerTest {

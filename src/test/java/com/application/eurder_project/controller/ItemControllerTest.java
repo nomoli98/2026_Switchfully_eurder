@@ -5,12 +5,16 @@ import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.ItemRepository;
 import com.application.eurder_project.repository.UserRepository;
 import com.application.eurder_project.service.request.PostItemRequest;
+import com.application.eurder_project.service.request.PutItemRequest;
 import io.restassured.RestAssured;
 import io.restassured.config.JsonConfig;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.config.JsonPathConfig;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -24,7 +28,6 @@ import java.util.stream.Stream;
 import static com.application.eurder_project.controller.ItemTestData.*;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -129,7 +132,7 @@ class ItemControllerTest {
                 arguments("description is null",
                           new PostItemRequest("Cup", null, 10.99, 5)),
                 arguments("price equals zero",
-                          new PostItemRequest("Cup", "Object to pour liquid", 0, 5)),
+                          new PostItemRequest("Cup", "Object to pour liquid", 0.0, 5)),
                 arguments("price is negative",
                           new PostItemRequest("Cup", "Object to pour liquid", -10.99, 5)),
                 arguments("stock equals zero",
@@ -239,4 +242,83 @@ class ItemControllerTest {
                 .statusCode(400);
     }
 
+    private void putItem(UUID authorization, String itemId, PutItemRequest request, int expectedStatus) {
+        given().header(AUTHORIZATION, authorization)
+               .contentType(ContentType.JSON)
+               .body(request)
+               .when()
+               .put(ITEMS + "/" + itemId)
+               .then()
+               .statusCode(expectedStatus);
+    }
+
+    @Test
+    @DisplayName("Update Item with only a price -> same id, only the price changes")
+    void updateItem_withOnlyAPrice_changesOnlyThePrice() {
+        String itemId = postItem(validPostRequest());
+
+        given().header(AUTHORIZATION, adminId)
+               .contentType(ContentType.JSON)
+               .body(new PutItemRequest(null, null, 8.99, null))
+               .when()
+               .put(ITEMS + "/" + itemId)
+               .then()
+               .statusCode(200)
+               .body("id", equalTo(itemId))
+               .body("name", equalTo("Cup"))
+               .body("description", equalTo("Object to pour liquid"))
+               .body("price", equalTo(8.99))
+               .body("stock", equalTo(5));
+
+        given().when()
+               .get(ITEMS + "/" + itemId)
+               .then()
+               .statusCode(200)
+               .body("id", equalTo(itemId))
+               .body("price", equalTo(8.99));
+        given().when().get(ITEMS).then().body("", hasSize(1));
+    }
+
+    @Test
+    @DisplayName("Update Item with a stock of 0 -> 200")
+    void updateItem_withStockZero_returns200() {
+        String itemId = postItem(validPostRequest());
+
+        given().header(AUTHORIZATION, adminId)
+               .contentType(ContentType.JSON)
+               .body(new PutItemRequest(null, null, null, 0))
+               .when()
+               .put(ITEMS + "/" + itemId)
+               .then()
+               .statusCode(200)
+               .body("stock", equalTo(0));
+    }
+
+    @Test
+    @DisplayName("Update Item with a price of 0 or a negative stock -> 400")
+    void updateItem_withZeroPriceOrNegativeStock_returns400() {
+        String itemId = postItem(validPostRequest());
+
+        putItem(adminId, itemId, new PutItemRequest(null, null, 0.0, null), 400);
+        putItem(adminId, itemId, new PutItemRequest(null, null, null, -1), 400);
+    }
+
+    @Test
+    @DisplayName("Update unknown Item -> 404")
+    void updateItem_withUnknownId_returns404() {
+        putItem(adminId, UUID.randomUUID().toString(), validPutRequest(), 404);
+    }
+
+    @Test
+    @DisplayName("Update Item without Authorization header -> 401")
+    void updateItem_withoutAuthorizationHeader_returns401() {
+        String itemId = postItem(validPostRequest());
+
+        given().contentType(ContentType.JSON)
+               .body(validPutRequest())
+               .when()
+               .put(ITEMS + "/" + itemId)
+               .then()
+               .statusCode(401);
+    }
 }

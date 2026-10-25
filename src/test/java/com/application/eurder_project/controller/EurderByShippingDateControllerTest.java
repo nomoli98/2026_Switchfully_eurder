@@ -24,20 +24,16 @@ import java.util.UUID;
 
 import static com.application.eurder_project.controller.EurderShippingControllerTestData.eurderFor;
 import static com.application.eurder_project.controller.EurderShippingControllerTestData.itemGroupShipping;
-import static com.application.eurder_project.controller.EurderTestData.cup;
-import static com.application.eurder_project.controller.EurderTestData.spoon;
-import static com.application.eurder_project.controller.EurderTestData.validRequest;
+import static com.application.eurder_project.controller.EurderTestData.*;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class EurderByShippingDateControllerTest {
 
     private static final String EURDERS = "/eurders";
     private static final String SHIPPING_TODAY = EURDERS + "/my-eurders/today";
+    private static final String ALL_SHIPPING_TODAY = EURDERS + "/shipping-today";
     private static final String AUTHORIZATION = "Authorization";
 
     private User admin;
@@ -188,5 +184,65 @@ class EurderByShippingDateControllerTest {
     @DisplayName("ShippingToday with unknown user id -> 401")
     void getShippingToday_withUnknownUser_returns401() {
         getShippingTodayAs(UUID.randomUUID()).statusCode(401);
+    }
+
+    // ---------- admin: all items shipping today ----------
+
+    private ValidatableResponse getAllShippingTodayAs(UUID userId) {
+        return given().header(AUTHORIZATION, userId)
+                      .when()
+                      .get(ALL_SHIPPING_TODAY)
+                      .then();
+    }
+
+    @Test
+    @DisplayName("AllShippingToday as admin -> one entry per eurder with its items and address")
+    void getAllShippingToday_asAdmin_returnsOneEntryPerEurderWithAddress() {
+        eurderRepository.save(eurderFor(customer, itemGroupShipping(cup, 1, today)));
+        eurderRepository.save(eurderFor(admin, itemGroupShipping(spoon, 2, today)));
+
+        getAllShippingTodayAs(admin.getId())
+                .statusCode(200)
+                .body("", hasSize(2))
+                .body("items.itemName", containsInAnyOrder(contains("Cup"), contains("Spoon")))
+                .body("shippingAddress.street", everyItem(equalTo(customer.getAddress().street())))
+                .body("shippingAddress.city", everyItem(equalTo(customer.getAddress().city())));
+    }
+
+    @Test
+    @DisplayName("AllShippingToday -> only item groups shipping today, eurders without any are left out")
+    void getAllShippingToday_returnsOnlyTodaysItemGroups() {
+        eurderRepository.save(eurderFor(customer,
+                                        itemGroupShipping(cup, 1, today),
+                                        itemGroupShipping(spoon, 2, today.plusDays(1))));
+        eurderRepository.save(eurderFor(customer, itemGroupShipping(spoon, 1, today.plusDays(7))));
+
+        getAllShippingTodayAs(admin.getId())
+                .statusCode(200)
+                .body("", hasSize(1))
+                .body("[0].items", hasSize(1))
+                .body("[0].items[0].itemName", equalTo("Cup"));
+    }
+
+    @Test
+    @DisplayName("AllShippingToday when nothing ships today -> empty list")
+    void getAllShippingToday_whenNothingShipsToday_returnsEmptyList() {
+        postEurderAsCustomer(cup, 1); // ships tomorrow
+
+        getAllShippingTodayAs(admin.getId())
+                .statusCode(200)
+                .body("", hasSize(0));
+    }
+
+    @Test
+    @DisplayName("AllShippingToday as customer -> 403")
+    void getAllShippingToday_asCustomer_returns403() {
+        getAllShippingTodayAs(customerId).statusCode(403);
+    }
+
+    @Test
+    @DisplayName("AllShippingToday without Authorization header -> 401")
+    void getAllShippingToday_withoutAuthorizationHeader_returns401() {
+        given().when().get(ALL_SHIPPING_TODAY).then().statusCode(401);
     }
 }

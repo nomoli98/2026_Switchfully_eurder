@@ -277,7 +277,7 @@ class UserControllerTest {
                           new PostUserRequest("Jane",
                                               "Doe",
                                               email,
-                                              "047123456",
+                                              "04712",
                                               "Main Street",
                                               12,
                                               "2B",
@@ -288,7 +288,7 @@ class UserControllerTest {
                           new PostUserRequest("Jane",
                                               "Doe",
                                               email,
-                                              "04712345678",
+                                              "0471234567890123",
                                               "Main Street",
                                               12,
                                               "2B",
@@ -404,4 +404,66 @@ class UserControllerTest {
                .statusCode(403);
     }
 
+    @Test
+    @DisplayName("CreateUser with an email already in use (any case) -> 409 and not stored")
+    void createUser_withExistingEmail_returns409() {
+        postUser(validRequest("Jane", "jane@example.com"));
+
+        given().header(AUTHORIZATION, adminId)
+               .contentType(ContentType.JSON)
+               .body(validRequest("John", "JANE@example.com"))
+               .when()
+               .post(USERS)
+               .then()
+               .statusCode(409);
+
+        given().header(AUTHORIZATION, adminId)
+               .when()
+               .get(USERS)
+               .then()
+               .statusCode(200)
+               .body("", hasSize(2));
+    }
+
+    @Test
+    @DisplayName("CreateUser with a phone number with country code and separators -> 201")
+    void createUser_withFormattedPhoneNumber_returns201() {
+        given().header(AUTHORIZATION, adminId)
+               .contentType(ContentType.JSON)
+               .body(new PostUserRequest("Jane",
+                                         "Doe",
+                                         "jane@example.com",
+                                         "+32 470 12 34 56",
+                                         "Main Street",
+                                         12,
+                                         "London",
+                                         "1000",
+                                         "Belgium",
+                                         Role.CUSTOMER))
+               .when()
+               .post(USERS)
+               .then()
+               .statusCode(201)
+               .body("phoneNumber", equalTo("+32 470 12 34 56"));
+    }
+
+    @Test
+    @DisplayName("Authorization header that is not an id -> 401")
+    void getAllUsers_withMalformedAuthorizationHeader_returns401() {
+        given().header(AUTHORIZATION, "not-a-uuid")
+               .when()
+               .get(USERS)
+               .then()
+               .statusCode(401);
+    }
+
+    @Test
+    @DisplayName("GetOneUser with a path id that is not an id -> 400")
+    void getOneById_withMalformedUserId_returns400() {
+        given().header(AUTHORIZATION, adminId)
+               .when()
+               .get(USERS + "/not-a-uuid")
+               .then()
+               .statusCode(400);
+    }
 }
