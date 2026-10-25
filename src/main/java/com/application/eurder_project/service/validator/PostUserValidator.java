@@ -60,6 +60,6 @@ public class PostUserValidator extends Validator {
     }
 
     public void existingUser(User user) {
-        userRepository.get(user.getId()).orElseThrow(() -> ExistenceException.NotInDatabase("user"));
+        userRepository.get(user.getId()).orElseThrow(() -> ExistenceException.notInDatabase("user"));
     }
 }

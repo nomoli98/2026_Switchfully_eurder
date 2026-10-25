@@ -10,7 +10,6 @@ import com.application.eurder_project.security.UnauthorizedException;
 import com.application.eurder_project.service.exception.ExistenceException;
 import com.application.eurder_project.service.mapper.ReorderMapper;
 import com.application.eurder_project.service.request.PostEurderRequest;
-import com.application.eurder_project.service.request.PostItemGroupRequest;
 import com.application.eurder_project.service.response.ShippedToday;
 import com.application.eurder_project.service.validator.PostEurderValidator;
 import org.slf4j.Logger;
@@ -44,13 +43,13 @@ public class EurderService {
 
     public Eurder getOneEurderById(UUID id) {
         return eurderRepository.get(id)
-                               .orElseThrow(() -> ExistenceException.NotInDatabase(Eurder.class.getTypeName()));
+                               .orElseThrow(() -> ExistenceException.notInDatabase(Eurder.class.getTypeName()));
     }
 
     public ShippedToday getOneUserItemsShippedToday(UUID userId) {
         logger.info("Verifying user.");
         User user = userRepository.get(userId)
-                                  .orElseThrow(() -> ExistenceException.NotInDatabase(User.class.getTypeName()));
+                                  .orElseThrow(() -> ExistenceException.notInDatabase(User.class.getTypeName()));
         logger.info("User validated.");
 
         LocalDate today = LocalDate.now();
@@ -65,7 +64,7 @@ public class EurderService {
     public List<Eurder> getEurdersByUser(UUID userId) {
         logger.info("Verifying user.");
         User user = userRepository.get(userId)
-                                  .orElseThrow(() -> ExistenceException.NotInDatabase(User.class.getTypeName()));
+                                  .orElseThrow(() -> ExistenceException.notInDatabase(User.class.getTypeName()));
         logger.info("User validated.");
         return eurderRepository.getByUser(user);
     }
@@ -79,7 +78,7 @@ public class EurderService {
         List<ItemGroup> groups = request.items()
                                         .stream()
                                         .map(r -> new ItemGroup(itemRepository.get(r.itemId())
-                                                                              .orElseThrow(() -> ExistenceException.NotInDatabase(
+                                                                              .orElseThrow(() -> ExistenceException.notInDatabase(
                                                                                       Eurder.class.getTypeName())),
                                                                 r.amount()))
                                         .toList();

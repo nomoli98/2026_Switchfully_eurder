@@ -39,6 +39,6 @@ public class PostItemValidator extends Validator{
     }
 
     public void existingItem(UUID itemId) {
-        itemRepository.get(itemId).orElseThrow(() -> ExistenceException.NotInDatabase("item"));
+        itemRepository.get(itemId).orElseThrow(() -> ExistenceException.notInDatabase("item"));
     }
 }

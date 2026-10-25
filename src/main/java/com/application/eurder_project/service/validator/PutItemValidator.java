@@ -27,6 +27,6 @@ public class PutItemValidator extends Validator{
     }
 
     public Item existingItem(UUID itemId) {
-        return itemRepository.get(itemId).orElseThrow(() -> ExistenceException.NotInDatabase("item"));
+        return itemRepository.get(itemId).orElseThrow(() -> ExistenceException.notInDatabase("item"));
     }
 }

@@ -5,8 +5,7 @@ import com.application.eurder_project.repository.ItemRepository;
 import com.application.eurder_project.service.exception.ExistenceException;
 import com.application.eurder_project.service.request.PostItemRequest;
 import com.application.eurder_project.service.request.PutItemRequest;
-import com.application.eurder_project.service.validator.PostItemValidator;
-import com.application.eurder_project.service.validator.PutItemValidator;
+import com.application.eurder_project.service.validator.ItemValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,31 +13,30 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+import static com.application.eurder_project.service.validator.ValidationUtils.isNotFilledIn;
+
 @Service
 public class ItemService {
-    private final ItemRepository repository;
-    private final PostItemValidator postValidator;
-    private final PutItemValidator putValidator;
     private static final Logger logger = LoggerFactory.getLogger(ItemService.class);
 
-    public ItemService(ItemRepository repository,
-                       PostItemValidator validator,
-                       PutItemValidator putValidator) {
+    private final ItemRepository repository;
+
+    public ItemService(ItemRepository repository) {
         this.repository = repository;
-        this.postValidator = validator;
-        this.putValidator = putValidator;
     }
 
-    public List<Item> getAllItems() {return repository.getAll();}
+    public List<Item> getAllItems() {
+        return repository.getAll();
+    }
 
     public Item getItemById(UUID id) {
         return repository.get(id)
-                         .orElseThrow(() -> ExistenceException.NotInDatabase(Item.class.getTypeName()));
+                         .orElseThrow(() -> ExistenceException.notInDatabase("item"));
     }
 
     public Item createItem(PostItemRequest request) {
         logger.info("Verifying post inputs.");
-        postValidator.isValidRequest(request);
+        ItemValidator.validateNewItem(request);
         logger.info("Post input validated.");
         return repository.save(new Item(request.name(),
                                         request.description(),
@@ -47,14 +45,18 @@ public class ItemService {
     }
 
     public Item updateItem(UUID itemId, PutItemRequest request) {
+        Item item = getItemById(itemId);
         logger.info("Verifying put inputs");
-        putValidator.isValidRequest(itemId, request);
+        ItemValidator.validateItemUpdate(request);
         logger.info("Put input validated.");
-        return repository.updateItem(itemId,
-                                     getItemById(itemId),
-                                     new Item(request.getName(),
-                                              request.getDescription(),
-                                              request.getPrice(),
-                                              request.getStock()));
+        applyUpdate(item, request);
+        return repository.save(item);
+    }
+
+    private void applyUpdate(Item item, PutItemRequest request) {
+        if (!isNotFilledIn(request.name())) item.setName(request.name());
+        if (!isNotFilledIn(request.description())) item.setDescription(request.description());
+        if (!isNotFilledIn(request.price())) item.setPrice(request.price());
+        if (!isNotFilledIn(request.stock())) item.setStock(request.stock());
     }
 }

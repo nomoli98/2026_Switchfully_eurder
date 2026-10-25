@@ -1,6 +1,5 @@
 package com.application.eurder_project.domain;
 
-import java.lang.classfile.constantpool.IntegerEntry;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -8,8 +7,8 @@ public class Item {
     private final UUID id;
     private String name;
     private String description;
-    private Double price;
-    private Integer stock;
+    private double price;
+    private int stock;
 
     public Item(String name, String description, double price, int stock) {
         this.id = UUID.randomUUID();
@@ -39,21 +38,41 @@ public class Item {
         return stock;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     public void setStock(int stock) {
         this.stock = stock;
     }
 
+    public boolean hasStockFor(int amount) {
+        return stock >= amount;
+    }
+
+    // Backorder behaviour: the stock is allowed to become negative.
+    // If it needs to change : replace the body with: stock = Math.max(0, stock - amount);
+    public void removeStock(int amount) {
+        stock -= amount;
+    }
+
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Item item = (Item) o;
-        return Double.compare(price, item.price) == 0 && stock == item.stock &&
-               Objects.equals(id, item.id) && Objects.equals(name, item.name) &&
-               Objects.equals(description, item.description);
+        return Objects.equals(id, ((Item) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, stock);
+        return Objects.hash(id);
     }
 }

@@ -30,7 +30,7 @@ public class UserService {
 
     public User getUserById(UUID id) {
         return repository.get(id)
-                         .orElseThrow(() -> ExistenceException.NotInDatabase(User.class.getTypeName()));
+                         .orElseThrow(() -> ExistenceException.notInDatabase(User.class.getTypeName()));
     }
 
     public User createUser(PostUserRequest request) {

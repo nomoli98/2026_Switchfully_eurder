@@ -39,7 +39,7 @@ public abstract class Validator {
         return eurderList.stream()
                          .filter(e -> e.getId().equals(uuid))
                          .findAny()
-                         .orElseThrow(() -> ExistenceException.NotInDatabase(
+                         .orElseThrow(() -> ExistenceException.notInDatabase(
                                  "This eurder is not in the database"));
     }
 }

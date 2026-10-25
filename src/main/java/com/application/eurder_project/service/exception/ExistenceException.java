@@ -5,7 +5,7 @@ public class ExistenceException extends RuntimeException {
         super(message);
     }
 
-    public static ExistenceException NotInDatabase(String objectType){
+    public static ExistenceException notInDatabase(String objectType){
         return new ExistenceException("This " + objectType + " is not found in the database.");
     }
 }
