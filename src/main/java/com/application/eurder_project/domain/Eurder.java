@@ -2,31 +2,24 @@ package com.application.eurder_project.domain;
 
 import com.application.eurder_project.domain.user.User;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Eurder {
     private final UUID id;
-    private double totalPrice;
-    private List<ItemGroup> items;
+    private final List<ItemGroup> items;
     private final User user;
 
     public Eurder(List<ItemGroup> items, User user) {
         this.id = UUID.randomUUID();
-        this.totalPrice = items.stream()
-                                .mapToDouble(ItemGroup::getGroupPrice)
-                                .sum();
         this.items = items;
         this.user = user;
     }
 
     public UUID getId() {
         return id;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
     }
 
     public List<ItemGroup> getItems() {
@@ -37,16 +30,25 @@ public class Eurder {
         return user;
     }
 
+    public double getTotalPrice() {
+        return items.stream().mapToDouble(ItemGroup::getGroupPrice).sum();
+    }
+
+    public List<ItemGroup> getItemGroupsShippingOn(LocalDate date) {
+        return items.stream()
+                    .filter(itemGroup -> date.equals(itemGroup.getShippingDate()))
+                    .toList();
+    }
+
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Eurder eurder = (Eurder) o;
-        return Double.compare(totalPrice, eurder.totalPrice) == 0 && Objects.equals(items, eurder.items) &&
-               Objects.equals(user, eurder.user);
+        return Objects.equals(id, ((Eurder) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(totalPrice, items, user);
+        return Objects.hash(id);
     }
 }
