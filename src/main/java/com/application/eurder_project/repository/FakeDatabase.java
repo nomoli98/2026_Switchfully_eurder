@@ -8,50 +8,50 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class FakeDatabase<T> {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+public abstract class FakeDatabase<T> {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Map<UUID, T> storedItems = new ConcurrentHashMap<>();
+    private final Function<T, UUID> idOf;
+
+    protected FakeDatabase(Function<T, UUID> idOf) {
+        this.idOf = idOf;
+    }
 
     public List<T> getAll() {
-        List<T> res = storedItems.values().stream().toList();
-        logger.trace("Fetching all items ({} {} stored).", res.size(), res.getClass().getName());
-        return res;
+        logger.trace("Fetching all items ({} stored).", storedItems.size());
+        return storedItems.values().stream().toList();
     }
 
     public Optional<T> get(UUID id) {
-        Optional<T> res = Optional.ofNullable(storedItems.get(id));
-        logger.trace("Fetching item {} of the class {}.", id, res.getClass().getName());
-        return res;
+        logger.trace("Fetching item {}.", id);
+        return Optional.ofNullable(storedItems.get(id));
     }
 
-    protected T saveWithId(UUID id, T item) {
-        logger.trace("Saving item {} in {} repository.", id, item.getClass().getName());
+    public T save(T item) {
+        UUID id = idOf.apply(item);
+        logger.trace("Saving item {}.", id);
         storedItems.put(id, item);
         return item;
     }
 
-    protected boolean update(UUID id, T item, T updatedItem) {
-        logger.trace("Updating item {} in {} repository.", id, item.getClass().getName());
-        return storedItems.replace(id, item, updatedItem);
+    protected List<T> filter(Predicate<T> predicate) {
+        return storedItems.values().stream().filter(predicate).toList();
     }
 
+    // Test only: removes a single item.
     public T deleteWithId(UUID id, T item) {
-        logger.trace("Deleting item {} in {} repository.", id, item.getClass().getName());
+        logger.trace("Deleting item {}.", id);
         storedItems.remove(id, item);
         return item;
     }
 
+    /// Test only: empties the table so tests do not influence each other.
     public void reset() {
         logger.debug("Reset table");
         storedItems.clear();
     }
-
-    protected List<T> getAllOptionals(Predicate<T> predicate) {
-        return storedItems.values().stream().filter(predicate).toList();
-    }
-
-
 }

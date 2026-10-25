@@ -8,7 +8,7 @@ public record PostUserRequest(String firstname,
                               String phoneNumber,
                               String street,
                               Integer number,
-                              String apartment,
+                              String city,
                               String postalCode,
                               String country,
                               Role role) {
