@@ -2,19 +2,17 @@ package com.application.eurder_project.domain.user;
 
 import com.application.eurder_project.security.Permission;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-
 public class User {
     private final UUID id;
-    private String firstname;
-    private String lastname;
+    private final String firstname;
+    private final String lastname;
     private final String email;
-    private String phoneNumber;
-    private Address address;
-    private Role role;
+    private final String phoneNumber;
+    private final Address address;
+    private final Role role;
 
     public User(String firstname, String lastname, String email, String phoneNumber, Address address, Role role) {
         this.id = UUID.randomUUID();
@@ -55,19 +53,18 @@ public class User {
     }
 
     public boolean hasPermission(Permission permission) {
-        List<Permission> permissions = getRole().permissions;
-        return permissions.contains(permission);
+        return role.hasPermission(permission);
     }
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User customer = (User) o;
-        return Objects.equals(id, customer.id) && Objects.equals(firstname, customer.firstname) && Objects.equals(lastname, customer.lastname) && Objects.equals(email, customer.email) && Objects.equals(phoneNumber, customer.phoneNumber) && Objects.equals(address, customer.address);
+        return Objects.equals(id, ((User) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstname, lastname, email, phoneNumber, address);
+        return Objects.hash(id);
     }
 }

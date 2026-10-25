@@ -5,13 +5,7 @@ public class UnauthorizedException extends RuntimeException {
         super(message);
     }
 
-    public static UnauthorizedException invalidCredentials(){
+    public static UnauthorizedException invalidCredentials() {
         return new UnauthorizedException("These credentials are invalid.");
     }
-
-    public static UnauthorizedException invalidPermission(){
-        return new UnauthorizedException("You do not have the authorizations to go further.");
-    }
-
-
 }

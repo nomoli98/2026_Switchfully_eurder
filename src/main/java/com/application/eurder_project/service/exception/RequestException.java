@@ -2,8 +2,8 @@ package com.application.eurder_project.service.exception;
 
 public class RequestException extends RuntimeException {
 
-    public RequestException(String s) {
-        super(s);
+    public RequestException(String message) {
+        super(message);
     }
 
     public static RequestException notFilledInField(String field) {
@@ -18,5 +18,7 @@ public class RequestException extends RuntimeException {
         return new RequestException("The number on the field " + field + " cannot be negative.");
     }
 
-
+    public static RequestException notPositiveNumber(String field) {
+        return new RequestException("The number on the field " + field + " must be greater than 0.");
+    }
 }

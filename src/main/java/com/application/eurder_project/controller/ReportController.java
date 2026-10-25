@@ -5,6 +5,7 @@ import com.application.eurder_project.controller.mapper.ReportMapper;
 import com.application.eurder_project.security.Permission;
 import com.application.eurder_project.security.SecurityService;
 import com.application.eurder_project.service.ReportService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
@@ -19,9 +20,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("report")
 public class ReportController {
+    private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
+
     private final ReportService service;
     private final ReportMapper mapper;
-    private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
     private final SecurityService security;
 
     public ReportController(ReportService service, ReportMapper mapper, SecurityService security) {
@@ -31,13 +33,13 @@ public class ReportController {
     }
 
     @SecurityRequirement(name = "Authorization")
+    @Operation(summary = "Get the report of all my orders")
     @GetMapping
-    public ReportDto createReport(
+    public ReportDto getMyReport(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
-            UUID id) {
-        security.validateAuthorization(id, Permission.VIEW_MY_REPORT);
-        return mapper.toDto(service.createReport(id));
+            UUID authorization) {
+        security.validateAuthorization(authorization, Permission.VIEW_MY_REPORT);
+        logger.info("Creating your report.");
+        return mapper.toDto(service.createReport(authorization));
     }
-
-
 }

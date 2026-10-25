@@ -1,6 +1,5 @@
 package com.application.eurder_project.controller.dto;
 
-import com.application.eurder_project.domain.user.Address;
 
 import java.util.UUID;
 
@@ -9,5 +8,5 @@ public record UserDto(UUID id,
                       String lastname,
                       String email,
                       String phoneNumber,
-                      Address address) {
+                      AddressDto address) {
 }

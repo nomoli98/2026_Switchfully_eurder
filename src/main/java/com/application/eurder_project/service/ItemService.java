@@ -53,6 +53,7 @@ public class ItemService {
         return repository.save(item);
     }
 
+    /** Only the fields that are filled in are changed, the id never changes. */
     private void applyUpdate(Item item, PutItemRequest request) {
         if (!isNotFilledIn(request.name())) item.setName(request.name());
         if (!isNotFilledIn(request.description())) item.setDescription(request.description());

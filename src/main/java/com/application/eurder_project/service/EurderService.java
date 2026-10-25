@@ -48,19 +48,18 @@ public class EurderService {
         return eurderRepository.getByUserId(userId);
     }
 
-    // Customer view: my items
+    /** Customer view: the item groups of this user's eurders that ship today. */
     public ShippedToday getMyItemsShippedToday(UUID userId) {
         User user = findUser(userId);
         LocalDate today = LocalDate.now();
         List<ItemGroup> itemsShippedToday = eurderRepository.getByUserId(userId)
                                                             .stream()
-                                                            .flatMap(eurder -> eurder.getItemGroupsShippingOn(
-                                                                    today).stream())
+                                                            .flatMap(eurder -> eurder.getItemGroupsShippingOn(today).stream())
                                                             .toList();
         return new ShippedToday(itemsShippedToday, user.getAddress());
     }
 
-    // Admin view: all items
+    /** Admin view: per eurder, the item groups that ship today and where to ship them. */
     public List<ShippedToday> getAllItemsShippedToday() {
         LocalDate today = LocalDate.now();
         return eurderRepository.getAll()
@@ -82,20 +81,19 @@ public class EurderService {
     }
 
     public Eurder reeurderAnExistingEurder(UUID userId, UUID eurderId) {
-        Eurder eurderToReeurder = getEurdersByUser(userId).stream()
-                                                          .filter(eurder -> eurder.getId()
-                                                                                  .equals(eurderId))
-                                                          .findAny()
-                                                          .orElseThrow(() -> ExistenceException.notInDatabase(
-                                                                  "eurder"));
+        Eurder eurderToReeurder = getEurdersByUser(userId)
+                .stream()
+                .filter(eurder -> eurder.getId().equals(eurderId))
+                .findAny()
+                .orElseThrow(() -> ExistenceException.notInDatabase("eurder"));
         return createEurder(userId, ReorderMapper.toEurderRequest(eurderToReeurder));
     }
 
     private List<ItemGroup> createItemGroups(List<PostItemGroupRequest> requests) {
-        // Existing item
+        // Every item must exist before any stock is changed.
         requests.forEach(request -> findItem(request.itemId()));
 
-        // Checking stock one group at a time to not have false shipping dates
+        // One group after the other: the shipping date of a group depends on the stock left by the previous groups.
         List<ItemGroup> groups = new ArrayList<>();
         for (PostItemGroupRequest request : requests) {
             Item item = findItem(request.itemId());

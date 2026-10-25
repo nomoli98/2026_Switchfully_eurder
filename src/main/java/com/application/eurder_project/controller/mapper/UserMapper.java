@@ -8,16 +8,23 @@ import java.util.List;
 
 @Component
 public class UserMapper {
+
+    private final AddressMapper addressMapper;
+
+    public UserMapper(AddressMapper addressMapper) {
+        this.addressMapper = addressMapper;
+    }
+
     public UserDto toDto(User user) {
         return new UserDto(user.getId(),
                            user.getFirstname(),
                            user.getLastname(),
                            user.getEmail(),
                            user.getPhoneNumber(),
-                           user.getAddress());
+                           addressMapper.toDto(user.getAddress()));
     }
 
-    public List<UserDto> toDtos(List<User> users){
+    public List<UserDto> toDtos(List<User> users) {
         return users.stream().map(this::toDto).toList();
     }
 }

@@ -2,7 +2,6 @@ package com.application.eurder_project.security;
 
 import com.application.eurder_project.domain.user.User;
 import com.application.eurder_project.repository.UserRepository;
-import com.application.eurder_project.service.exception.ForbiddenException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

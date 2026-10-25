@@ -49,7 +49,7 @@ public abstract class FakeDatabase<T> {
         return item;
     }
 
-    /// Test only: empties the table so tests do not influence each other.
+    // Test only: empties the table so tests do not influence each other.
     public void reset() {
         logger.debug("Reset table");
         storedItems.clear();
