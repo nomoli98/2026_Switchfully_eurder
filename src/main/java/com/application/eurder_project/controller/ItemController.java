@@ -23,9 +23,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("items")
 public class ItemController {
+    private static final Logger logger = LoggerFactory.getLogger(ItemController.class);
+
     private final ItemService service;
     private final ItemMapper mapper;
-    private static final Logger logger = LoggerFactory.getLogger(ItemController.class);
     private final SecurityService security;
 
     public ItemController(ItemService service, ItemMapper mapper, SecurityService security) {
@@ -49,37 +50,39 @@ public class ItemController {
     @SecurityRequirement(name = "Authorization")
     @Operation(summary = "Create an item")
     @ApiResponses({@ApiResponse(responseCode = "201", description = "Item created"),
+                   @ApiResponse(responseCode = "400", description = "Invalid item"),
                    @ApiResponse(responseCode = "401",
                                 description = "Missing or invalid Authorization header"),
-                   @ApiResponse(responseCode = "403", description = "Not allowed to create users")})
+                   @ApiResponse(responseCode = "403", description = "Not allowed to create items")})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto createUser(
+    public ItemDto createItem(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
-            UUID authorization, @RequestBody PostItemRequest request) {
+            UUID authorization,
+            @RequestBody PostItemRequest request) {
         security.validateAuthorization(authorization, Permission.CREATE_ITEM);
         logger.info("Creating a new item.");
         return mapper.toDto(service.createItem(request));
     }
 
     @SecurityRequirement(name = "Authorization")
-    @Operation(summary = "Update an item")
+    @Operation(summary = "Update an item",
+               description = "Only the fields that are filled in are changed.")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Item updated"),
                    @ApiResponse(responseCode = "400", description = "Invalid update body"),
                    @ApiResponse(responseCode = "401",
                                 description = "Missing or invalid Authorization header"),
-                   @ApiResponse(responseCode = "403", description = "Not allowed to update users")})
+                   @ApiResponse(responseCode = "403", description = "Not allowed to update items"),
+                   @ApiResponse(responseCode = "404", description = "Item not found")})
     @PutMapping(path = "{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDto createUser(
+    public ItemDto updateItem(
             @Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false)
             UUID authorization,
             @RequestBody PutItemRequest request,
             @PathVariable("id") UUID itemId) {
-        security.validateAuthorization(authorization, Permission.CREATE_ITEM);
+        security.validateAuthorization(authorization, Permission.UPDATE_ITEM);
         logger.info("Updating an item.");
         return mapper.toDto(service.updateItem(itemId, request));
     }
-
-
 }
