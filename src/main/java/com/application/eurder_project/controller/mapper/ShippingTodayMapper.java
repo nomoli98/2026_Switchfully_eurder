@@ -1,9 +1,7 @@
 package com.application.eurder_project.controller.mapper;
 
 import com.application.eurder_project.controller.dto.ShippedTodayDto;
-import com.application.eurder_project.domain.Eurder;
-import com.application.eurder_project.domain.ItemGroup;
-import com.application.eurder_project.domain.user.Address;
+import com.application.eurder_project.service.response.ShippedToday;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,18 +17,12 @@ public class ShippingTodayMapper {
         this.addressMapper = addressMapper;
     }
 
-    public ShippedTodayDto toDto(Eurder eurder) {
-        return new ShippedTodayDto(itemGroupMapper.toDtos(eurder.getItems()),
-                                   addressMapper.toDto(eurder.getUser().getAddress())
-
-        );
+    public ShippedTodayDto toDto(ShippedToday shippedToday) {
+        return new ShippedTodayDto(itemGroupMapper.toDtos(shippedToday.items()),
+                                   addressMapper.toDto(shippedToday.address()));
     }
 
-
-    public ShippedTodayDto toDto(List<ItemGroup> items, Address address) {
-        return new ShippedTodayDto(itemGroupMapper.toDtos(items),
-                                   addressMapper.toDto(address)
-
-        );
+    public List<ShippedTodayDto> toDtos(List<ShippedToday> shippedToday) {
+        return shippedToday.stream().map(this::toDto).toList();
     }
 }
