@@ -8,15 +8,15 @@ import java.util.List;
 
 @Component
 public class ItemGroupMapper {
-    public ItemGroupDto toDto(ItemGroup group){
+    public ItemGroupDto toDto(ItemGroup group) {
         return new ItemGroupDto(group.getItem().getId(),
-                                group.getItem().getName(),
+                                group.getItemName(),
                                 group.getAmount(),
                                 group.getGroupPrice(),
                                 group.getShippingDate());
     }
 
-    public List<ItemGroupDto> toDtos(List<ItemGroup> groups){
+    public List<ItemGroupDto> toDtos(List<ItemGroup> groups) {
         return groups.stream().map(this::toDto).toList();
     }
 }

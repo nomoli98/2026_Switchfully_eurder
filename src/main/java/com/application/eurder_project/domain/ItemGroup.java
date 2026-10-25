@@ -4,27 +4,42 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public class ItemGroup {
-    private Item item;
-    private int amount;
-    private double groupPrice;
-    private LocalDate shippingDate;
+    private static final int DAYS_TO_SHIP_WHEN_IN_STOCK = 1;
+    private static final int DAYS_TO_SHIP_WHEN_NOT_IN_STOCK = 7;
+
+    private final Item item;
+    private final String itemName;
+    private final double unitPrice;
+    private final int amount;
+    private final LocalDate shippingDate;
 
     public ItemGroup(Item item, int amount) {
-        this.item = item;
-        this.amount = amount;
-        this.groupPrice = calculateGroupPrice();
-        this.shippingDate = calculateShippingDate();
+        this(item, amount, calculateShippingDate(item, amount));
     }
 
     public ItemGroup(Item item, int amount, LocalDate shippingDate) {
         this.item = item;
+        this.itemName = item.getName();
+        this.unitPrice = item.getPrice();
         this.amount = amount;
-        this.groupPrice = calculateGroupPrice();
         this.shippingDate = shippingDate;
+    }
+
+    private static LocalDate calculateShippingDate(Item item, int amount) {
+        int daysToShip = item.hasStockFor(amount) ? DAYS_TO_SHIP_WHEN_IN_STOCK : DAYS_TO_SHIP_WHEN_NOT_IN_STOCK;
+        return LocalDate.now().plusDays(daysToShip);
     }
 
     public Item getItem() {
         return item;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public double getUnitPrice() {
+        return unitPrice;
     }
 
     public int getAmount() {
@@ -32,28 +47,20 @@ public class ItemGroup {
     }
 
     public double getGroupPrice() {
-        return groupPrice;
+        return amount * unitPrice;
     }
 
     public LocalDate getShippingDate() {
         return shippingDate;
     }
 
-    public double calculateGroupPrice(){
-        return amount * item.getPrice();
-    }
-
-    private LocalDate calculateShippingDate() {
-        if(getItem().getStock() < getAmount()) return LocalDate.now().plusDays(7);
-        return LocalDate.now().plusDays(1);
-    }
-
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ItemGroup itemGroup = (ItemGroup) o;
-        return amount == itemGroup.amount && Objects.equals(item, itemGroup.item) &&
-               Objects.equals(shippingDate, itemGroup.shippingDate);
+        ItemGroup other = (ItemGroup) o;
+        return amount == other.amount && Objects.equals(item, other.item) &&
+               Objects.equals(shippingDate, other.shippingDate);
     }
 
     @Override
