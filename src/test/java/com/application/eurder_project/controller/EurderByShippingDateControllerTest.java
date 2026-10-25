@@ -115,7 +115,8 @@ class EurderByShippingDateControllerTest {
                 .body("items[0].shippingDate", equalTo(today.toString()))
                 .body("shippingAddress", notNullValue())
                 .body("shippingAddress.street", equalTo(customer.getAddress().street()))
-                .body("shippingAddress.city", equalTo(customer.getAddress().city()));;
+                .body("shippingAddress.city", equalTo(customer.getAddress().city()));
+        ;
 
     }
 
@@ -210,7 +211,8 @@ class EurderByShippingDateControllerTest {
     }
 
     @Test
-    @DisplayName("AllShippingToday -> only item groups shipping today, eurders without any are left out")
+    @DisplayName(
+            "AllShippingToday -> only item groups shipping today, eurders without any are left out")
     void getAllShippingToday_returnsOnlyTodaysItemGroups() {
         eurderRepository.save(eurderFor(customer,
                                         itemGroupShipping(cup, 1, today),

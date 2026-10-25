@@ -33,19 +33,19 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Checking getAll")
-    void WhenAListOfFourUsersWasPreSaved_WhenFetchingAllUsers_ThenReturnsAListOfFour(){
+    void WhenAListOfFourUsersWasPreSaved_WhenFetchingAllUsers_ThenReturnsAListOfFour() {
         assertEquals(4, service.getAllUsers().size());
     }
 
     @Test
     @DisplayName("Checking getOne with valid id")
-    void WhenAListOfFourUsersWasPreSaved_WhenFetchingAUserWithAValidId_ThenReturnsTheUser(){
+    void WhenAListOfFourUsersWasPreSaved_WhenFetchingAUserWithAValidId_ThenReturnsTheUser() {
         assertEquals("Tom", service.getUserById(admin.getId()).getFirstname());
     }
 
     @Test
     @DisplayName("Checking getOne with invalid id")
-    void WhenAListOfFourUsersWasPreSaved_WhenFetchingAUserWithAInvalidId_ThenThrows(){
+    void WhenAListOfFourUsersWasPreSaved_WhenFetchingAUserWithAInvalidId_ThenThrows() {
         assertThrows(ExistenceException.class, () -> service.getUserById(UUID.randomUUID()));
     }
 
@@ -56,7 +56,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Create user -> stored with the city in the address")
-    void WhenCreatingAUser_ThenItIsStoredWithItsCity(){
+    void WhenCreatingAUser_ThenItIsStoredWithItsCity() {
         User created = service.createUser(request("jane@example.com", "0471234567"));
         assertEquals("London", created.getAddress().city());
         assertEquals(5, service.getAllUsers().size());
@@ -64,15 +64,17 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Create user with an email that is already used -> throws, whatever the case")
-    void WhenCreatingAUserWithAnExistingEmail_ThenThrowsConflict(){
-        assertThrows(ConflictException.class, () -> service.createUser(request("tom@sfth.uk", "0471234567")));
-        assertThrows(ConflictException.class, () -> service.createUser(request("TOM@SFTH.UK", "0471234567")));
+    void WhenCreatingAUserWithAnExistingEmail_ThenThrowsConflict() {
+        assertThrows(ConflictException.class,
+                     () -> service.createUser(request("tom@sfth.uk", "0471234567")));
+        assertThrows(ConflictException.class,
+                     () -> service.createUser(request("TOM@SFTH.UK", "0471234567")));
         assertEquals(4, service.getAllUsers().size());
     }
 
     @Test
     @DisplayName("Create user with a phone number with separators or a country code -> accepted")
-    void WhenCreatingAUserWithAFormattedPhoneNumber_ThenItIsAccepted(){
+    void WhenCreatingAUserWithAFormattedPhoneNumber_ThenItIsAccepted() {
         service.createUser(request("a@example.com", "+32 470 12 34 56"));
         service.createUser(request("b@example.com", "0470-12.34.56"));
         service.createUser(request("c@example.com", "003212345678"));
@@ -81,10 +83,14 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Create user with an invalid phone number -> throws")
-    void WhenCreatingAUserWithAnInvalidPhoneNumber_ThenThrows(){
-        assertThrows(RequestException.class, () -> service.createUser(request("a@example.com", "04712")));
-        assertThrows(RequestException.class, () -> service.createUser(request("a@example.com", "0471234567890123")));
-        assertThrows(RequestException.class, () -> service.createUser(request("a@example.com", "04712345ab")));
-        assertThrows(RequestException.class, () -> service.createUser(request("a@example.com", "+")));
+    void WhenCreatingAUserWithAnInvalidPhoneNumber_ThenThrows() {
+        assertThrows(RequestException.class,
+                     () -> service.createUser(request("a@example.com", "04712")));
+        assertThrows(RequestException.class,
+                     () -> service.createUser(request("a@example.com", "0471234567890123")));
+        assertThrows(RequestException.class,
+                     () -> service.createUser(request("a@example.com", "04712345ab")));
+        assertThrows(RequestException.class,
+                     () -> service.createUser(request("a@example.com", "+")));
     }
 }

@@ -36,7 +36,8 @@ public class UserService {
     public User createUser(PostUserRequest request) {
         logger.info("Verifying inputs.");
         UserValidator.validateNewUser(request);
-        if (repository.existsByEmailIgnoreCase(request.email())) throw ConflictException.emailAlreadyInUse();
+        if (repository.existsByEmailIgnoreCase(request.email()))
+            throw ConflictException.emailAlreadyInUse();
         logger.debug("Input validated.");
         Address address = new Address(request.street(),
                                       request.number(),

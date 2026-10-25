@@ -48,18 +48,23 @@ public class EurderService {
         return eurderRepository.getByUserId(userId);
     }
 
-    /** Customer view: the item groups of this user's eurders that ship today. */
+    /**
+     * Customer view: the item groups of this user's eurders that ship today.
+     */
     public ShippedToday getMyItemsShippedToday(UUID userId) {
         User user = findUser(userId);
         LocalDate today = LocalDate.now();
         List<ItemGroup> itemsShippedToday = eurderRepository.getByUserId(userId)
                                                             .stream()
-                                                            .flatMap(eurder -> eurder.getItemGroupsShippingOn(today).stream())
+                                                            .flatMap(eurder -> eurder.getItemGroupsShippingOn(
+                                                                    today).stream())
                                                             .toList();
         return new ShippedToday(itemsShippedToday, user.getAddress());
     }
 
-    /** Admin view: per eurder, the item groups that ship today and where to ship them. */
+    /**
+     * Admin view: per eurder, the item groups that ship today and where to ship them.
+     */
     public List<ShippedToday> getAllItemsShippedToday() {
         LocalDate today = LocalDate.now();
         return eurderRepository.getAll()

@@ -19,6 +19,7 @@ public class RequestException extends RuntimeException {
     }
 
     public static RequestException notPositiveNumber(String field) {
-        return new RequestException("The number on the field " + field + " must be greater than 0.");
+        return new RequestException(
+                "The number on the field " + field + " must be greater than 0.");
     }
 }

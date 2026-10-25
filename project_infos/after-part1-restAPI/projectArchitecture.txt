@@ -1,0 +1,19 @@
+main
+    java
+        com
+            application
+                eurder_project
+                    controller
+                        dtos
+						exception
+						mapper
+					domain
+						user
+					repository
+					security
+					service
+					    exception
+					    mapper
+					    request
+					    response
+					    validator

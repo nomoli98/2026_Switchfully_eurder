@@ -13,7 +13,7 @@ public class EurderMapper {
 
     public EurderMapper(ItemGroupMapper itemGroupMapper) {this.itemGroupMapper = itemGroupMapper;}
 
-    public EurderDto toDto(Eurder eurder){
+    public EurderDto toDto(Eurder eurder) {
         return new EurderDto(eurder.getId(),
                              eurder.getTotalPrice(),
                              itemGroupMapper.toDtos(eurder.getItems()),
@@ -21,7 +21,7 @@ public class EurderMapper {
         );
     }
 
-    public List<EurderDto> toDtos(List<Eurder> eurders){
+    public List<EurderDto> toDtos(List<Eurder> eurders) {
         return eurders.stream().map(this::toDto).toList();
     }
 }

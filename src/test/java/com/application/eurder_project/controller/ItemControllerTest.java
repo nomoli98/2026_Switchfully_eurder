@@ -160,14 +160,14 @@ class ItemControllerTest {
     void getOneById_withValidAuthorization_returns200() {
 
         ItemDto item = given().header(AUTHORIZATION, adminId)
-                             .contentType(ContentType.JSON)
-                             .body(validPostRequest())
-                             .when()
-                             .post(ITEMS)
-                             .then()
-                             .statusCode(201)
-                             .extract()
-                             .as(ItemDto.class);
+                              .contentType(ContentType.JSON)
+                              .body(validPostRequest())
+                              .when()
+                              .post(ITEMS)
+                              .then()
+                              .statusCode(201)
+                              .extract()
+                              .as(ItemDto.class);
 
         given()
                 .contentType(ContentType.JSON)
@@ -181,7 +181,7 @@ class ItemControllerTest {
 
     @Test
     @DisplayName("Update Item without Authorization -> FORBIDDEN")
-    void updateItem_withInvalidAuthorization_Return403(){
+    void updateItem_withInvalidAuthorization_Return403() {
         ItemDto item = given().header(AUTHORIZATION, adminId)
                               .contentType(ContentType.JSON)
                               .body(validPostRequest())
@@ -192,17 +192,17 @@ class ItemControllerTest {
                               .extract()
                               .as(ItemDto.class);
         given().header(AUTHORIZATION, customerId)
-                .contentType(ContentType.JSON)
-                .body(validPutRequest())
-                .when()
-                .put(ITEMS + "/" + item.id())
-                .then()
-                .statusCode(403);
+               .contentType(ContentType.JSON)
+               .body(validPutRequest())
+               .when()
+               .put(ITEMS + "/" + item.id())
+               .then()
+               .statusCode(403);
     }
 
     @Test
     @DisplayName("Update Item with Authorization -> OK")
-    void updateItem_withValidAuthorization_Return200(){
+    void updateItem_withValidAuthorization_Return200() {
         ItemDto item = given().header(AUTHORIZATION, adminId)
                               .contentType(ContentType.JSON)
                               .body(validPostRequest())
@@ -213,17 +213,17 @@ class ItemControllerTest {
                               .extract()
                               .as(ItemDto.class);
         given().header(AUTHORIZATION, adminId)
-                .contentType(ContentType.JSON)
-                .body(validPutRequest())
-                .when()
-                .put(ITEMS + "/" + item.id())
-                .then()
-                .statusCode(200);
+               .contentType(ContentType.JSON)
+               .body(validPutRequest())
+               .when()
+               .put(ITEMS + "/" + item.id())
+               .then()
+               .statusCode(200);
     }
 
     @Test
     @DisplayName("Update Item with Invalid Request -> BAD_REQUEST")
-    void updateItem_withInvalidRequest_Return200(){
+    void updateItem_withInvalidRequest_Return200() {
         ItemDto item = given().header(AUTHORIZATION, adminId)
                               .contentType(ContentType.JSON)
                               .body(validPostRequest())
@@ -234,15 +234,18 @@ class ItemControllerTest {
                               .extract()
                               .as(ItemDto.class);
         given().header(AUTHORIZATION, adminId)
-                .contentType(ContentType.JSON)
-                .body(invalidPutRequest())
-                .when()
-                .put(ITEMS + "/" + item.id())
-                .then()
-                .statusCode(400);
+               .contentType(ContentType.JSON)
+               .body(invalidPutRequest())
+               .when()
+               .put(ITEMS + "/" + item.id())
+               .then()
+               .statusCode(400);
     }
 
-    private void putItem(UUID authorization, String itemId, PutItemRequest request, int expectedStatus) {
+    private void putItem(UUID authorization,
+                         String itemId,
+                         PutItemRequest request,
+                         int expectedStatus) {
         given().header(AUTHORIZATION, authorization)
                .contentType(ContentType.JSON)
                .body(request)

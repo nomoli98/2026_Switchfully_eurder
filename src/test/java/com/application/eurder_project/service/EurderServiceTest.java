@@ -56,7 +56,7 @@ class EurderServiceTest {
 
     @Test
     @DisplayName("save and get from the repository -> returns the same eurder")
-    void givenASavedEurder_WhenGettingItFromTheRepository_ReturnsEurder(){
+    void givenASavedEurder_WhenGettingItFromTheRepository_ReturnsEurder() {
         eurderRepository.save(eurder);
         assertEquals(eurder, eurderRepository.get(eurder.getId()).orElseThrow());
     }
@@ -64,7 +64,7 @@ class EurderServiceTest {
 
     @Test
     @DisplayName("getByUser with valid id -> return list of eurders")
-    void givenAValidUserId_WhenGetByUser_ReturnsListOfEurder(){
+    void givenAValidUserId_WhenGetByUser_ReturnsListOfEurder() {
         List<Eurder> eurders = ServiceTestData.validEurderList(admin);
         eurders.forEach(eurderRepository::save);
         assertEquals(4, service.getEurdersByUser(admin.getId()).size());
@@ -72,41 +72,50 @@ class EurderServiceTest {
 
     @Test
     @DisplayName("with valid user & valid eurder -> when reeurder -> returns new eurder")
-    void givenAValidUserIdAndAValidEurderId_WhenReEurdering_ReturnsNewEurder(){
+    void givenAValidUserIdAndAValidEurderId_WhenReEurdering_ReturnsNewEurder() {
         eurderRepository.save(eurder);
-        assertEquals(admin.getId(), service.reeurderAnExistingEurder(admin.getId(), eurder.getId()).getUser().getId());
+        assertEquals(admin.getId(),
+                     service.reeurderAnExistingEurder(admin.getId(), eurder.getId())
+                            .getUser()
+                            .getId());
     }
 
     @Test
     @DisplayName("with invalid user & valid eurder -> when reeurder -> throws exception")
-    void givenAnInvalidUserIdAndAValidEurderId_WhenReEurdering_ThrowsExistenceException(){
+    void givenAnInvalidUserIdAndAValidEurderId_WhenReEurdering_ThrowsExistenceException() {
         eurderRepository.save(eurder);
-        assertThrows(ExistenceException.class, () -> service.reeurderAnExistingEurder(UUID.randomUUID(), eurder.getId()));
+        assertThrows(ExistenceException.class,
+                     () -> service.reeurderAnExistingEurder(UUID.randomUUID(), eurder.getId()));
     }
 
     @Test
     @DisplayName("with valid user & invalid eurder -> when reeurder -> throws exception")
-    void givenAValidUserIdAndAnInvalidEurderId_WhenReEurdering_ThrowsExistenceException(){
+    void givenAValidUserIdAndAnInvalidEurderId_WhenReEurdering_ThrowsExistenceException() {
         eurderRepository.save(eurder);
-        assertThrows(ExistenceException.class, () -> service.reeurderAnExistingEurder(admin.getId(), UUID.randomUUID()));
+        assertThrows(ExistenceException.class,
+                     () -> service.reeurderAnExistingEurder(admin.getId(), UUID.randomUUID()));
     }
 
     @Test
-    @DisplayName("with valid user & valid eurder -> if item price changer -> when reeurder -> returns different total price")
-    void givenAValidUserIdAndAValidEurderId_WhenReEurderingAndChangingThePriceOfAnItem_ReturnsNewEurderWithDifferentPrice(){
+    @DisplayName(
+            "with valid user & valid eurder -> if item price changer -> when reeurder -> returns different total price")
+    void givenAValidUserIdAndAValidEurderId_WhenReEurderingAndChangingThePriceOfAnItem_ReturnsNewEurderWithDifferentPrice() {
         eurderRepository.save(eurder);
         Item item = eurder.getItems().get(0).getItem();
         item.setPrice(0.99);
-        assertNotEquals(eurder.getTotalPrice(), service.reeurderAnExistingEurder(admin.getId(), eurder.getId()).getTotalPrice());
+        assertNotEquals(eurder.getTotalPrice(),
+                        service.reeurderAnExistingEurder(admin.getId(), eurder.getId())
+                               .getTotalPrice());
     }
 
     @Test
     @DisplayName("createEurder with the same item twice -> stock is used up group after group")
-    void givenTheSameItemTwice_WhenCreatingEurder_TheSecondGroupIsCheckedAgainstTheStockLeft(){
+    void givenTheSameItemTwice_WhenCreatingEurder_TheSecondGroupIsCheckedAgainstTheStockLeft() {
         Item cup = ServiceTestData.validItem();
         itemRepository.save(cup);
-        PostEurderRequest request = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 3),
-                                                                  new PostItemGroupRequest(cup.getId(), 3)));
+        PostEurderRequest request
+                = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 3),
+                                                new PostItemGroupRequest(cup.getId(), 3)));
 
         Eurder created = service.createEurder(admin.getId(), request);
 
@@ -117,22 +126,25 @@ class EurderServiceTest {
 
     @Test
     @DisplayName("createEurder above the stock -> backorder, the stock goes negative")
-    void givenAnAmountAboveTheStock_WhenCreatingEurder_TheStockGoesNegative(){
+    void givenAnAmountAboveTheStock_WhenCreatingEurder_TheStockGoesNegative() {
         Item cup = ServiceTestData.validItem();
         itemRepository.save(cup);
 
-        service.createEurder(admin.getId(), new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 8))));
+        service.createEurder(admin.getId(),
+                             new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(),
+                                                                                    8))));
 
         assertEquals(-3, cup.getStock());
     }
 
     @Test
     @DisplayName("createEurder with an unknown item -> throws and stock is untouched")
-    void givenAnUnknownItem_WhenCreatingEurder_ThrowsAndLeavesTheStockAlone(){
+    void givenAnUnknownItem_WhenCreatingEurder_ThrowsAndLeavesTheStockAlone() {
         Item cup = ServiceTestData.validItem();
         itemRepository.save(cup);
-        PostEurderRequest request = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 2),
-                                                                  new PostItemGroupRequest(UUID.randomUUID(), 1)));
+        PostEurderRequest request
+                = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 2),
+                                                new PostItemGroupRequest(UUID.randomUUID(), 1)));
 
         assertThrows(ExistenceException.class, () -> service.createEurder(admin.getId(), request));
         assertEquals(5, cup.getStock());
@@ -140,21 +152,25 @@ class EurderServiceTest {
 
     @Test
     @DisplayName("createEurder with an unknown user -> throws unauthorized")
-    void givenAnUnknownUser_WhenCreatingEurder_ThrowsUnauthorized(){
+    void givenAnUnknownUser_WhenCreatingEurder_ThrowsUnauthorized() {
         Item cup = ServiceTestData.validItem();
         itemRepository.save(cup);
-        PostEurderRequest request = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 1)));
+        PostEurderRequest request
+                = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 1)));
 
-        assertThrows(UnauthorizedException.class, () -> service.createEurder(UUID.randomUUID(), request));
+        assertThrows(UnauthorizedException.class,
+                     () -> service.createEurder(UUID.randomUUID(), request));
     }
 
     @Test
     @DisplayName("createEurder -> name and unit price are a snapshot of the item")
-    void givenAnItemThatChangesAfterTheEurder_TheItemGroupKeepsTheOldNameAndPrice(){
+    void givenAnItemThatChangesAfterTheEurder_TheItemGroupKeepsTheOldNameAndPrice() {
         Item cup = ServiceTestData.validItem();
         itemRepository.save(cup);
         Eurder created = service.createEurder(admin.getId(),
-                                              new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 2))));
+                                              new PostEurderRequest(List.of(new PostItemGroupRequest(
+                                                      cup.getId(),
+                                                      2))));
 
         cup.setName("Glass");
         cup.setPrice(1.0);
@@ -168,13 +184,14 @@ class EurderServiceTest {
 
     @Test
     @DisplayName("items shipped today -> customer sees own groups, admin sees one entry per eurder")
-    void givenEurdersShippingToday_WhenFetchingThem_CustomerAndAdminViewsAreCorrect(){
+    void givenEurdersShippingToday_WhenFetchingThem_CustomerAndAdminViewsAreCorrect() {
         LocalDate today = LocalDate.now();
         User customer = ServiceTestData.validUserList().get(0);
         userRepository.save(customer);
         Item cup = ServiceTestData.validItem();
         eurderRepository.save(new Eurder(List.of(new ItemGroup(cup, 1, today),
-                                                 new ItemGroup(cup, 1, today.plusDays(1))), customer));
+                                                 new ItemGroup(cup, 1, today.plusDays(1))),
+                                         customer));
         eurderRepository.save(new Eurder(List.of(new ItemGroup(cup, 2, today.plusDays(1))), admin));
 
         List<ShippedToday> all = service.getAllItemsShippedToday();
@@ -186,6 +203,7 @@ class EurderServiceTest {
         assertEquals(1, mine.items().size());
         assertEquals(customer.getAddress(), mine.address());
         assertEquals(0, service.getMyItemsShippedToday(admin.getId()).items().size());
-        assertThrows(ExistenceException.class, () -> service.getMyItemsShippedToday(UUID.randomUUID()));
+        assertThrows(ExistenceException.class,
+                     () -> service.getMyItemsShippedToday(UUID.randomUUID()));
     }
 }

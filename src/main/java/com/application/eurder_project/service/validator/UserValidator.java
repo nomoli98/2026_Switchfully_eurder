@@ -11,21 +11,29 @@ public final class UserValidator {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
-    /** Optional leading +, then 8 to 15 digits. */
+    /**
+     * Optional leading +, then 8 to 15 digits.
+     */
     private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+?\\d{8,15}$");
-    /** Spaces, dots and dashes are allowed as separators: "+32 470 12 34 56". */
+    /**
+     * Spaces, dots and dashes are allowed as separators: "+32 470 12 34 56".
+     */
     private static final Pattern PHONE_SEPARATORS = Pattern.compile("[\\s.\\-]");
 
     private UserValidator() {
     }
 
     public static void validateNewUser(PostUserRequest request) {
-        if (isNotFilledIn(request.firstname())) throw RequestException.notFilledInField("user firstname");
-        if (isNotFilledIn(request.lastname())) throw RequestException.notFilledInField("user lastname");
+        if (isNotFilledIn(request.firstname()))
+            throw RequestException.notFilledInField("user firstname");
+        if (isNotFilledIn(request.lastname()))
+            throw RequestException.notFilledInField("user lastname");
         if (isNotFilledIn(request.email())) throw RequestException.notFilledInField("user email");
         if (!isValidEmail(request.email())) throw RequestException.invalidField("user email");
-        if (isNotFilledIn(request.phoneNumber())) throw RequestException.notFilledInField("user phone number");
-        if (!isValidPhoneNumber(request.phoneNumber())) throw RequestException.invalidField("user phone number");
+        if (isNotFilledIn(request.phoneNumber()))
+            throw RequestException.notFilledInField("user phone number");
+        if (!isValidPhoneNumber(request.phoneNumber()))
+            throw RequestException.invalidField("user phone number");
         if (!hasValidAddress(request)) throw RequestException.invalidField("user address");
         if (isNotFilledIn(request.role())) throw RequestException.notFilledInField("user role");
     }
@@ -39,7 +47,9 @@ public final class UserValidator {
         return PHONE_PATTERN.matcher(withoutSeparators).matches();
     }
 
-    /** The city is optional, the other address fields are required. */
+    /**
+     * The city is optional, the other address fields are required.
+     */
     private static boolean hasValidAddress(PostUserRequest request) {
         return !isNotFilledIn(request.street())
                && !isNotFilledIn(request.number())

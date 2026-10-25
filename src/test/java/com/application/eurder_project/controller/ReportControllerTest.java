@@ -109,7 +109,7 @@ class ReportControllerTest {
 
     @Test
     @DisplayName("createReport -> returns YOUR report")
-    void createReport_asSpecificCustomer_returnsSpecificCustomersReport(){
+    void createReport_asSpecificCustomer_returnsSpecificCustomersReport() {
         given().header(AUTHORIZATION, customerId)
                .contentType(ContentType.JSON)
                .when()
@@ -118,11 +118,6 @@ class ReportControllerTest {
                .statusCode(200)
                .body("eurderDtos[0].userId", equalTo(customerId.toString()));
     }
-
-
-
-
-
 
 
 }

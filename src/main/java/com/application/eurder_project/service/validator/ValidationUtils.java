@@ -16,12 +16,16 @@ public final class ValidationUtils {
         return value == null || (value instanceof Double number && number.isNaN());
     }
 
-    /** True for numbers below 0. A missing number (null) is not negative. */
+    /**
+     * True for numbers below 0. A missing number (null) is not negative.
+     */
     public static boolean isNegative(Number number) {
         return number != null && number.doubleValue() < 0;
     }
 
-    /** True for numbers of 0 or below. A missing number (null) is not "not positive". */
+    /**
+     * True for numbers of 0 or below. A missing number (null) is not "not positive".
+     */
     public static boolean isNotPositive(Number number) {
         return number != null && number.doubleValue() <= 0;
     }

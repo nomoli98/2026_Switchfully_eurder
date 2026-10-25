@@ -1,6 +1,6 @@
 # Örder GUI
 
-![Order Logo](../project_infos/order.png)
+![Order Logo](../project_infos/before-project-start/order.png)
 
 Good news! We're hired to develop the frontend of the Örder application!
 

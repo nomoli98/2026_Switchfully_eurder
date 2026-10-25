@@ -26,7 +26,9 @@ public class ItemGroup {
     }
 
     private static LocalDate calculateShippingDate(Item item, int amount) {
-        int daysToShip = item.hasStockFor(amount) ? DAYS_TO_SHIP_WHEN_IN_STOCK : DAYS_TO_SHIP_WHEN_NOT_IN_STOCK;
+        int daysToShip = item.hasStockFor(amount) ?
+                         DAYS_TO_SHIP_WHEN_IN_STOCK :
+                         DAYS_TO_SHIP_WHEN_NOT_IN_STOCK;
         return LocalDate.now().plusDays(daysToShip);
     }
 

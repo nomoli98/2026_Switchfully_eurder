@@ -14,12 +14,14 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().info(new Info().title("Eurder API")
-                                            .description("Order management API for the Eurder project")
+                                            .description(
+                                                    "Order management API for the Eurder project")
                                             .version("1.0.0"))
                             .externalDocs(new ExternalDocumentation().url(
                                     "https://github.com/nomoli98/2026_Switchfully_eurder"))
                             .components(new Components().addSecuritySchemes("Authorization",
-                                                                            new SecurityScheme().type(SecurityScheme.Type.APIKEY)
+                                                                            new SecurityScheme().type(
+                                                                                                        SecurityScheme.Type.APIKEY)
                                                                                                 .in(SecurityScheme.In.HEADER)
                                                                                                 .name("Authorization")));
     }

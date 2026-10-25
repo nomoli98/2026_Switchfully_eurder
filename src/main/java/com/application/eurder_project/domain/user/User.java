@@ -14,7 +14,12 @@ public class User {
     private final Address address;
     private final Role role;
 
-    public User(String firstname, String lastname, String email, String phoneNumber, Address address, Role role) {
+    public User(String firstname,
+                String lastname,
+                String email,
+                String phoneNumber,
+                Address address,
+                Role role) {
         this.id = UUID.randomUUID();
         this.firstname = firstname;
         this.lastname = lastname;

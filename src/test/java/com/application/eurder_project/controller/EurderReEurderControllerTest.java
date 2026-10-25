@@ -379,7 +379,8 @@ class EurderReEurderControllerTest {
     }
 
     @Test
-    @DisplayName("Reeurder of another customer's Eurder -> nothing is created and stock is untouched")
+    @DisplayName(
+            "Reeurder of another customer's Eurder -> nothing is created and stock is untouched")
     void reeurder_ofAnotherCustomersEurder_changesNothing() {
         String foreignId = postEurder(otherCustomerId, validRequest(cup.getId(), 1));
         int stockBefore = currentStock(cup);

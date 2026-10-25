@@ -1,7 +1,7 @@
 # Eurder – Part 1: REST API (in-memory)
 
 > State of the project **after the refactoring**, before the database / ORM part.
-> Code links are relative to this file. Story texts: [project_infos/README.md](../README.md).
+> Code links are relative to this file. Story texts: [project_infos/README.md](../before-project-start/README.md).
 
 **Quick facts**
 

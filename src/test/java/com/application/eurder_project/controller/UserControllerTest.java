@@ -116,7 +116,8 @@ class UserControllerTest {
                .statusCode(200)
                .body("", hasSize(3))
                .body("id", containsInAnyOrder(janeId, johnId, adminId.toString()))
-               .body("email", containsInAnyOrder("jane@example.com", "john@example.com", admin.getEmail()));
+               .body("email",
+                     containsInAnyOrder("jane@example.com", "john@example.com", admin.getEmail()));
     }
 
     @Test
@@ -366,23 +367,23 @@ class UserControllerTest {
                .then()
                .statusCode(400);
     }
-    
+
     @Test
     @DisplayName("CreateUser with bad Authorization -> Forbidden")
-    void createUser_withInvalidAuthorization_returns403(){
+    void createUser_withInvalidAuthorization_returns403() {
         userRepository.save(customer);
-            given().header(AUTHORIZATION, customerId)
-                   .contentType(ContentType.JSON)
-                   .body(validRequest())
-                   .when()
-                   .post(USERS)
-                   .then()
-                   .statusCode(403);
+        given().header(AUTHORIZATION, customerId)
+               .contentType(ContentType.JSON)
+               .body(validRequest())
+               .when()
+               .post(USERS)
+               .then()
+               .statusCode(403);
     }
-    
+
     @Test
     @DisplayName("GetOneUser with good Authorization -> Ok")
-    void getOneById_withValidAuthorization_returns200(){
+    void getOneById_withValidAuthorization_returns200() {
         userRepository.save(customer);
         given().header(AUTHORIZATION, adminId)
                .contentType(ContentType.JSON)
@@ -394,7 +395,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("GetOneUser with bad Authorization -> Forbidden")
-    void getOneById_withInvalidAuthorization_returns403(){
+    void getOneById_withInvalidAuthorization_returns403() {
         userRepository.save(customer);
         given().header(AUTHORIZATION, customerId)
                .contentType(ContentType.JSON)

@@ -39,19 +39,19 @@ class ItemServiceTest {
 
     @Test
     @DisplayName("GetOne with valid id")
-    void WhenAListOfFourItemsWasPreSaved_WhenFetchingAItemWithAValidId_ThenReturnsTheItem(){
+    void WhenAListOfFourItemsWasPreSaved_WhenFetchingAItemWithAValidId_ThenReturnsTheItem() {
         assertEquals("Cup", service.getItemById(firstItemId).getName());
     }
 
     @Test
     @DisplayName("GetOne with invalid id")
-    void WhenAListOfFourItemsWasPreSaved_WhenFetchingAItemWithAInvalidId_ThenThrows(){
+    void WhenAListOfFourItemsWasPreSaved_WhenFetchingAItemWithAInvalidId_ThenThrows() {
         assertThrows(ExistenceException.class, () -> service.getItemById(UUID.randomUUID()));
     }
 
     @Test
     @DisplayName("Update with a valid id and request with one filled in field")
-    void WhenWhenAListOfFourItemsWasPreSaved_WhenUpdatingAnItemWithAValidIdAnRequestWithOneFilledInField_ThenTheItemIsUpdated(){
+    void WhenWhenAListOfFourItemsWasPreSaved_WhenUpdatingAnItemWithAValidIdAnRequestWithOneFilledInField_ThenTheItemIsUpdated() {
         PutItemRequest request = new PutItemRequest("Glass", null, null, null);
         service.updateItem(firstItemId, request);
         assertEquals("Glass", service.getItemById(firstItemId).getName());
@@ -62,7 +62,7 @@ class ItemServiceTest {
 
     @Test
     @DisplayName("Update with a valid id and request with two filled in fields")
-    void WhenWhenAListOfFourItemsWasPreSaved_WhenUpdatingAnItemWithAValidIdAnRequestWithTwoFilledInFields_ThenTheItemIsUpdated(){
+    void WhenWhenAListOfFourItemsWasPreSaved_WhenUpdatingAnItemWithAValidIdAnRequestWithTwoFilledInFields_ThenTheItemIsUpdated() {
         PutItemRequest request = new PutItemRequest("Glass", null, 8.99, null);
         service.updateItem(firstItemId, request);
         assertEquals("Glass", service.getItemById(firstItemId).getName());
@@ -73,7 +73,7 @@ class ItemServiceTest {
 
     @Test
     @DisplayName("Update with a valid id and request with all fields filled in")
-    void WhenWhenAListOfFourItemsWasPreSaved_WhenUpdatingAnItemWithAValidIdAnRequestWithAllFieldsFilledIn_ThenTheItemIsUpdated(){
+    void WhenWhenAListOfFourItemsWasPreSaved_WhenUpdatingAnItemWithAValidIdAnRequestWithAllFieldsFilledIn_ThenTheItemIsUpdated() {
         PutItemRequest request = new PutItemRequest("Glass", "A glass, dummy", 0.99, 1);
         service.updateItem(firstItemId, request);
         assertEquals("Glass", service.getItemById(firstItemId).getName());
@@ -84,8 +84,9 @@ class ItemServiceTest {
 
     @Test
     @DisplayName("Update keeps the id and the stored item")
-    void WhenUpdatingAnItem_ThenTheIdStaysTheSameAndTheStoredItemIsUpdated(){
-        Item updated = service.updateItem(firstItemId, new PutItemRequest("Glass", null, null, null));
+    void WhenUpdatingAnItem_ThenTheIdStaysTheSameAndTheStoredItemIsUpdated() {
+        Item updated = service.updateItem(firstItemId,
+                                          new PutItemRequest("Glass", null, null, null));
         assertEquals(firstItemId, updated.getId());
         assertEquals(5, service.getAllItems().size());
         assertEquals("Glass", repository.get(firstItemId).orElseThrow().getName());
@@ -93,7 +94,7 @@ class ItemServiceTest {
 
     @Test
     @DisplayName("Update with only a price -> only the price changes")
-    void WhenUpdatingOnlyThePrice_ThenOnlyThePriceChanges(){
+    void WhenUpdatingOnlyThePrice_ThenOnlyThePriceChanges() {
         service.updateItem(firstItemId, new PutItemRequest(null, null, 8.99, null));
         Item item = service.getItemById(firstItemId);
         assertEquals("Cup", item.getName());
@@ -104,7 +105,7 @@ class ItemServiceTest {
 
     @Test
     @DisplayName("Update with blank name and description -> they are not changed")
-    void WhenUpdatingWithBlankTexts_ThenTheTextsAreNotChanged(){
+    void WhenUpdatingWithBlankTexts_ThenTheTextsAreNotChanged() {
         service.updateItem(firstItemId, new PutItemRequest(" ", "", null, 3));
         Item item = service.getItemById(firstItemId);
         assertEquals("Cup", item.getName());
@@ -114,29 +115,37 @@ class ItemServiceTest {
 
     @Test
     @DisplayName("Update the stock to 0 is allowed")
-    void WhenUpdatingTheStockToZero_ThenTheStockIsZero(){
+    void WhenUpdatingTheStockToZero_ThenTheStockIsZero() {
         service.updateItem(firstItemId, new PutItemRequest(null, null, null, 0));
         assertEquals(0, service.getItemById(firstItemId).getStock());
     }
 
     @Test
     @DisplayName("Update with a price of 0 or a negative stock throws")
-    void WhenUpdatingWithAZeroPriceOrNegativeStock_ThenThrows(){
-        assertThrows(RequestException.class, () -> service.updateItem(firstItemId, new PutItemRequest(null, null, 0.0, null)));
-        assertThrows(RequestException.class, () -> service.updateItem(firstItemId, new PutItemRequest(null, null, null, -1)));
+    void WhenUpdatingWithAZeroPriceOrNegativeStock_ThenThrows() {
+        assertThrows(RequestException.class,
+                     () -> service.updateItem(firstItemId,
+                                              new PutItemRequest(null, null, 0.0, null)));
+        assertThrows(RequestException.class,
+                     () -> service.updateItem(firstItemId,
+                                              new PutItemRequest(null, null, null, -1)));
         assertEquals(10.99, service.getItemById(firstItemId).getPrice());
     }
 
     @Test
     @DisplayName("Update with an unknown id throws")
-    void WhenUpdatingAnUnknownItem_ThenThrows(){
-        assertThrows(ExistenceException.class, () -> service.updateItem(UUID.randomUUID(), new PutItemRequest("Glass", null, null, null)));
+    void WhenUpdatingAnUnknownItem_ThenThrows() {
+        assertThrows(ExistenceException.class,
+                     () -> service.updateItem(UUID.randomUUID(),
+                                              new PutItemRequest("Glass", null, null, null)));
     }
 
     @Test
     @DisplayName("Create item with a stock or price of 0 throws")
-    void WhenCreatingAnItemWithZeroStockOrPrice_ThenThrows(){
-        assertThrows(RequestException.class, () -> service.createItem(new PostItemRequest("Cup", "Pour", 1.0, 0)));
-        assertThrows(RequestException.class, () -> service.createItem(new PostItemRequest("Cup", "Pour", 0.0, 1)));
+    void WhenCreatingAnItemWithZeroStockOrPrice_ThenThrows() {
+        assertThrows(RequestException.class,
+                     () -> service.createItem(new PostItemRequest("Cup", "Pour", 1.0, 0)));
+        assertThrows(RequestException.class,
+                     () -> service.createItem(new PostItemRequest("Cup", "Pour", 0.0, 1)));
     }
 }

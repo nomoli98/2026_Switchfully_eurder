@@ -8,7 +8,7 @@ import java.util.List;
 
 @Component
 public class ItemMapper {
-    public ItemDto toDto(Item item){
+    public ItemDto toDto(Item item) {
         return new ItemDto(item.getId(),
                            item.getName(),
                            item.getDescription(),
@@ -16,7 +16,7 @@ public class ItemMapper {
                            item.getStock());
     }
 
-    public List<ItemDto> toDtos(List<Item> itemList){
+    public List<ItemDto> toDtos(List<Item> itemList) {
         return itemList.stream().map(this::toDto).toList();
     }
 }

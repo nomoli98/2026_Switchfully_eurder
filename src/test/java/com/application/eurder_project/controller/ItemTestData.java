@@ -7,15 +7,16 @@ class ItemTestData {
 
     public ItemTestData() {
     }
-    public static PostItemRequest validPostRequest(){
+
+    public static PostItemRequest validPostRequest() {
         return new PostItemRequest("Cup", "Object to pour liquid", 10.99, 5);
     }
 
-    public static PutItemRequest validPutRequest(){
+    public static PutItemRequest validPutRequest() {
         return new PutItemRequest("Glass", null, null, null);
     }
 
-    public static PutItemRequest invalidPutRequest(){
+    public static PutItemRequest invalidPutRequest() {
         return new PutItemRequest("Glass", null, -3.5, null);
     }
 }

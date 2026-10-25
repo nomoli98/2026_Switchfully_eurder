@@ -333,7 +333,8 @@ class EurderControllerTest {
     }
 
     @Test
-    @DisplayName("CreateEurder with the same item twice -> second group is checked against the stock left")
+    @DisplayName(
+            "CreateEurder with the same item twice -> second group is checked against the stock left")
     void createEurder_withTheSameItemTwice_usesUpTheStockGroupAfterGroup() {
         PostEurderRequest request
                 = new PostEurderRequest(List.of(new PostItemGroupRequest(cup.getId(), 3),
